@@ -14,6 +14,17 @@
 
 const VETSONCLOUD_API = "https://api.vetsoncloud.com";
 
+/** Fetch with timeout helper */
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 15000): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 /** Cache the VetsonCloud auth token + org info to avoid logging in on every request */
 let cachedAuth: {
   token: string;
@@ -57,7 +68,7 @@ async function getVetsonCloudAuth(): Promise<{
   }
 
   // Step 1: Login
-  const loginRes = await fetch(`${VETSONCLOUD_API}/Login`, {
+  const loginRes = await fetchWithTimeout(`${VETSONCLOUD_API}/Login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ Email: email, Password: password }),
@@ -79,7 +90,7 @@ async function getVetsonCloudAuth(): Promise<{
   // Step 2: Get divisions (categories) and locations for this organisation
   let locationId = "";
   let categoryId = "";
-  const locationsRes = await fetch(`${VETSONCLOUD_API}/Organisations/${organisationId}/Divisions`, {
+  const locationsRes = await fetchWithTimeout(`${VETSONCLOUD_API}/Organisations/${organisationId}/Divisions`, {
     headers: {
       Authorization: `BEARER ${token}`,
       Accept: "application/json",
@@ -102,7 +113,7 @@ async function getVetsonCloudAuth(): Promise<{
 
   // If we still don't have a locationId, try fetching organisation info
   if (!locationId) {
-    const orgRes = await fetch(`${VETSONCLOUD_API}/Organisations/${organisationId}`, {
+    const orgRes = await fetchWithTimeout(`${VETSONCLOUD_API}/Organisations/${organisationId}`, {
       headers: {
         Authorization: `BEARER ${token}`,
         Accept: "application/json",
@@ -216,7 +227,7 @@ export default async function handler(req: {
     };
 
     // Create the appointment in VetsonCloud
-    const apptRes = await fetch(
+    const apptRes = await fetchWithTimeout(
       `${VETSONCLOUD_API}/Organisations/${auth.organisationId}/Appointments`,
       {
         method: "POST",
