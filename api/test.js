@@ -1,5 +1,5 @@
-// Simple test endpoint - using CommonJS format for maximum Vercel compatibility
-module.exports = (req, res) => {
+// Simple test endpoint - ESM format
+export default function handler(req, res) {
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
   res.end(JSON.stringify({
@@ -8,4 +8,4 @@ module.exports = (req, res) => {
     method: req.method,
     timestamp: new Date().toISOString(),
   }));
-};
+}
