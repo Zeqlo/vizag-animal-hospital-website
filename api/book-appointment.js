@@ -9,13 +9,16 @@
  *   VETSONCLOUD_PASSWORD - login password
  *
  * The org ID, location ID, and division ID are auto-fetched from the
- * VetsonCloud API after login — no manual configuration needed.
+ * VetsonCloud API after login.
  */
 
 const VETSONCLOUD_API = "https://api.vetsoncloud.com";
 
+/** Cache the VetsonCloud auth token + org info to avoid logging in on every request */
+let cachedAuth = null;
+
 /** Fetch with timeout helper */
-async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 15000): Promise<Response> {
+async function fetchWithTimeout(url, options, timeoutMs = 15000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -25,36 +28,7 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs = 1
   }
 }
 
-/** Cache the VetsonCloud auth token + org info to avoid logging in on every request */
-let cachedAuth: {
-  token: string;
-  organisationId: string;
-  locationId: string;
-  categoryId: string;
-  expiresAt: number;
-} | null = null;
-
-interface BookingData {
-  ownerName: string;
-  phone: string;
-  petName: string;
-  petType: string;
-  service: string;
-  preferredDate: string; // YYYY-MM-DD
-  timeSlot: string;      // e.g. "Morning (9 AM - 12 PM)"
-  notes?: string;
-}
-
-/**
- * Login to VetsonCloud and cache the token + org/location/division IDs.
- * Token is cached for 50 minutes (VetsonCloud tokens typically last 1 hour).
- */
-async function getVetsonCloudAuth(): Promise<{
-  token: string;
-  organisationId: string;
-  locationId: string;
-  categoryId: string;
-}> {
+async function getVetsonCloudAuth() {
   // Return cached auth if still valid
   if (cachedAuth && Date.now() < cachedAuth.expiresAt) {
     return cachedAuth;
@@ -90,23 +64,22 @@ async function getVetsonCloudAuth(): Promise<{
   // Step 2: Get divisions (categories) and locations for this organisation
   let locationId = "";
   let categoryId = "";
-  const locationsRes = await fetchWithTimeout(`${VETSONCLOUD_API}/Organisations/${organisationId}/Divisions`, {
+
+  const divisionsRes = await fetchWithTimeout(`${VETSONCLOUD_API}/Organisations/${organisationId}/Divisions`, {
     headers: {
       Authorization: `BEARER ${token}`,
       Accept: "application/json",
     },
   });
 
-  if (locationsRes.ok) {
-    const locationsData = await locationsRes.json();
-    // Divisions = categories (e.g. "Consultation", "Surgery", "Grooming")
-    if (locationsData.Data?.Divisions?.length > 0) {
-      categoryId = String(locationsData.Data.Divisions[0].Id);
+  if (divisionsRes.ok) {
+    const divisionsData = await divisionsRes.json();
+    if (divisionsData.Data?.Divisions?.length > 0) {
+      categoryId = String(divisionsData.Data.Divisions[0].Id);
     }
   }
 
-  // Step 3: Get organisation details to find the default location/clinic
-  // The login response may include locations, or we fetch from organisation endpoint
+  // Try to get locationId from login response
   if (loginData.Data.Login.Locations?.length > 0) {
     locationId = String(loginData.Data.Login.Locations[0].Id);
   }
@@ -124,7 +97,6 @@ async function getVetsonCloudAuth(): Promise<{
       if (orgData.Data?.Locations?.length > 0) {
         locationId = String(orgData.Data.Locations[0].Id);
       }
-      // Also try to get divisions/categories from here
       if (!categoryId && orgData.Data?.Divisions?.length > 0) {
         categoryId = String(orgData.Data.Divisions[0].Id);
       }
@@ -143,9 +115,8 @@ async function getVetsonCloudAuth(): Promise<{
   return cachedAuth;
 }
 
-/** Map website time slots to VetsonCloud start/end times */
-function getSlotTimes(timeSlot: string): { startTime: string; endTime: string } {
-  const slotMap: Record<string, { startTime: string; endTime: string }> = {
+function getSlotTimes(timeSlot) {
+  const slotMap = {
     "Morning (9 AM - 12 PM)": { startTime: "09:00:00", endTime: "12:00:00" },
     "Afternoon (12 PM - 3 PM)": { startTime: "12:00:00", endTime: "15:00:00" },
     "Evening (3 PM - 9:30 PM)": { startTime: "15:00:00", endTime: "21:30:00" },
@@ -153,9 +124,8 @@ function getSlotTimes(timeSlot: string): { startTime: string; endTime: string } 
   return slotMap[timeSlot] || { startTime: "09:00:00", endTime: "12:00:00" };
 }
 
-/** Map pet type from website to VetsonCloud format */
-function mapPetType(petType: string): string {
-  const typeMap: Record<string, string> = {
+function mapPetType(petType) {
+  const typeMap = {
     Dog: "Dog",
     Cat: "Cat",
     Bird: "Bird",
@@ -165,36 +135,23 @@ function mapPetType(petType: string): string {
   return typeMap[petType] || petType;
 }
 
-export default async function handler(req: {
-  method?: string;
-  body?: BookingData | string;
-}) {
+export default async function handler(req, res) {
   // Only allow POST
   if (req.method !== "POST") {
-    return {
-      statusCode: 405,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "error", message: "Method not allowed" }),
-    };
+    res.statusCode = 405;
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({ status: "error", message: "Method not allowed" }));
   }
 
   try {
-    // Parse body
-    const body: BookingData =
-      typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const { ownerName, phone, petName, petType, service, preferredDate, timeSlot, notes } = body;
 
     // Validate required fields
     if (!ownerName || !phone || !petName || !petType || !service || !preferredDate || !timeSlot) {
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: "error",
-          message: "Missing required fields",
-        }),
-      };
+      res.statusCode = 400;
+      res.setHeader("Content-Type", "application/json");
+      return res.end(JSON.stringify({ status: "error", message: "Missing required fields" }));
     }
 
     // Get VetsonCloud auth (auto-login with cached token)
@@ -202,13 +159,11 @@ export default async function handler(req: {
 
     // Build the appointment payload
     const { startTime, endTime } = getSlotTimes(timeSlot);
-    const purpose = notes
-      ? `${service} — ${notes}`
-      : service;
+    const purpose = notes ? `${service} — ${notes}` : service;
 
     const appointmentPayload = {
       UserId: "",
-      CountryID: 1, // India
+      CountryID: 1,
       MobileNumber: phone,
       AppointmentStartTime: `${preferredDate}T${startTime}Z`,
       AppointmentEndTime: `${preferredDate}T${endTime}Z`,
@@ -248,17 +203,14 @@ export default async function handler(req: {
     const apptData = await apptRes.json();
 
     if (apptData.Status === "Success") {
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: "success",
-          message: "Appointment created in VetsonCloud",
-          data: apptData.Data,
-        }),
-      };
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      return res.end(JSON.stringify({
+        status: "success",
+        message: "Appointment created in VetsonCloud",
+        data: apptData.Data,
+      }));
     } else {
-      // Handle specific error messages from VetsonCloud
       let errorMessage = "Failed to create appointment in VetsonCloud";
       if (apptData.Data?.MobileNumber === "Mobile Number Already Exist.") {
         errorMessage = "This mobile number is already registered. Please use a different number or contact the clinic.";
@@ -268,27 +220,20 @@ export default async function handler(req: {
         errorMessage = apptData.Message;
       }
 
-      return {
-        statusCode: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: "error",
-          message: errorMessage,
-        }),
-      };
+      res.statusCode = 400;
+      res.setHeader("Content-Type", "application/json");
+      return res.end(JSON.stringify({ status: "error", message: errorMessage }));
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error occurred";
     console.error("[book-appointment] Error:", message);
 
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        status: "error",
-        message: "Could not connect to VetsonCloud. Please try again or call us directly.",
-        debug: process.env.NODE_ENV === "development" ? message : undefined,
-      }),
-    };
+    res.statusCode = 500;
+    res.setHeader("Content-Type", "application/json");
+    return res.end(JSON.stringify({
+      status: "error",
+      message: "Could not connect to VetsonCloud. Please try again or call us directly.",
+      debug: process.env.NODE_ENV === "development" ? message : undefined,
+    }));
   }
 }
