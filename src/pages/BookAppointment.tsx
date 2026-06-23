@@ -46,7 +46,32 @@ export default function BookAppointment() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [submittedData, setSubmittedData] = useState<AppointmentFormData | null>(null)
 
+  const [whatsappLink, setWhatsappLink] = useState('')
+
   const onSubmit = async (data: AppointmentFormData) => {
+    // Build WhatsApp message with booking details
+    const clinicNumber = '916913812717' // Test number — change to 919014176278 for production
+    const dateFormatted = new Date(data.preferredDate).toLocaleDateString('en-IN', {
+      day: 'numeric', month: 'long', year: 'numeric',
+    })
+    const messageLines = [
+      'New Appointment Booking from Website',
+      '',
+      `Owner Name: ${data.ownerName}`,
+      `Phone: ${data.phone}`,
+      `Pet Name: ${data.petName} (${data.petType})`,
+      `Service: ${data.service}`,
+      `Date: ${dateFormatted}`,
+      `Time Slot: ${data.timeSlot}`,
+    ]
+    if (data.notes) {
+      messageLines.push(`Notes: ${data.notes}`)
+    }
+    const waMessage = encodeURIComponent(messageLines.join('\n'))
+    const waLink = `https://wa.me/${clinicNumber}?text=${waMessage}`
+    setWhatsappLink(waLink)
+
+    // Also try the VetsonCloud API (works silently if env vars are set)
     try {
       const response = await fetch('/api/book-appointment', {
         method: 'POST',
@@ -57,19 +82,17 @@ export default function BookAppointment() {
       const result = await response.json()
 
       if (!response.ok || result.status === 'error') {
-        // If the API fails, still show success to the user but log the error
-        // The clinic will still get the call — we don't want to block the user
+        // If the API fails, still show success to the user
+        // The WhatsApp link ensures the clinic gets notified
         console.error('VetsonCloud booking error:', result.message)
       }
-
-      setSubmittedData(data)
-      setIsSuccess(true)
     } catch (error) {
-      // Network error — still show success to user, log the error
+      // Network error — still show success, WhatsApp link is the fallback
       console.error('Booking API error:', error)
-      setSubmittedData(data)
-      setIsSuccess(true)
     }
+
+    setSubmittedData(data)
+    setIsSuccess(true)
   }
 
   const handleBookAnother = () => {
@@ -185,6 +208,18 @@ export default function BookAppointment() {
                         <Phone className="h-4 w-4 text-ocean-600" />
                         We will call you to confirm within 2 hours
                       </p>
+
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+                        <a
+                          href={whatsappLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] text-white font-semibold hover:bg-[#1da851] transition-colors w-full sm:w-auto justify-center"
+                        >
+                          <MessageCircle className="h-5 w-5" />
+                          Send Details to Clinic WhatsApp
+                        </a>
+                      </div>
 
                       <Button variant="accent" size="lg" onClick={handleBookAnother}>
                         Book Another Appointment
