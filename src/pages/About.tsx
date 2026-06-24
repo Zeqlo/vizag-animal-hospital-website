@@ -15,7 +15,6 @@ import {
   Scissors,
   Activity,
   ArrowRight,
-  CheckCircle,
   BadgeCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
@@ -23,7 +22,6 @@ import { Card } from "@/components/ui/Card"
 import { Container } from "@/components/ui/Container"
 import { Section } from "@/components/ui/Section"
 import { SectionTitle } from "@/components/ui/SectionTitle"
-import { Badge } from "@/components/ui/Badge"
 import { TeamMemberCard } from "@/components/common/TeamMemberCard"
 import { teamMembers } from "@/data/team"
 import { clinicInfo } from "@/data/clinicInfo"
@@ -70,7 +68,7 @@ const facilities = [
   {
     icon: Microscope,
     title: "Diagnostic Lab",
-    description: "In-house laboratory with blood analyzers, digital X-ray, ultrasound, and microscopy for rapid, accurate diagnostics.",
+    description: "In-house laboratory with blood analyzers, ultrasound, and microscopy for rapid, accurate diagnostics.",
   },
   {
     icon: Pill,
@@ -90,16 +88,11 @@ const facilities = [
   {
     icon: Activity,
     title: "ICU",
-    description: "Intensive Care Unit with oxygen therapy, vital signs monitoring, and round-the-clock supervision for critical patients.",
+    description: "Intensive Care Unit with oxygen therapy, vital signs monitoring, and dedicated care for critical patients.",
   },
 ]
 
 const certifications = [
-  {
-    title: "KVA",
-    subtitle: "Karnataka Veterinary Association",
-    description: "Registered member of the Karnataka Veterinary Association.",
-  },
   {
     title: "VCI",
     subtitle: "Veterinary Council of India",
@@ -134,7 +127,7 @@ export default function About() {
         <title>About Us | Vizag Animal Hospital</title>
         <meta
           name="description"
-          content="Learn about Vizag Animal Hospital & Store in Visakhapatnam. Discover our mission, values, facilities, and our certified veterinary team led by Dr. K. Mounika and Dr. B. Santosh Kumar."
+          content="Learn about Vizag Animal Hospital & Store in Visakhapatnam. Discover our mission, values, facilities, and our certified veterinary team led by Dr. K. Mounika (BVSc. & AH, M.V.Sc)."
         />
       </Helmet>
 
@@ -147,9 +140,6 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <Badge variant="coral" className="mb-4 bg-white/15 text-white">
-              Established 2015
-            </Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading text-white">
               About Us
             </h1>
@@ -183,28 +173,16 @@ export default function About() {
                 trusted by thousands of pet parents across the city.
               </p>
               <p className="text-slate-600 mb-4">
-                Led by <strong>Dr. K. Mounika</strong> (BVSc. &amp; AH) and <strong>Dr. B. Santosh
-                Kumar</strong> (BVSc. &amp; AH, PG DLAS &amp; DAW), our team brings together expertise
-                in general medicine, surgery, diagnostics, and animal welfare. With advanced
-                qualifications and a deep love for animals, we combine modern medical technology with
-                genuine compassion.
+                Led by <strong>Dr. K. Mounika</strong> (BVSc. &amp; AH, M.V.Sc), our team brings
+                together expertise in general medicine, surgery, diagnostics, and animal welfare.
+                With advanced qualifications and a deep love for animals, we combine modern medical
+                technology with genuine compassion.
               </p>
               <p className="text-slate-600 mb-6">
                 Today, Vizag Animal Hospital offers comprehensive services including vaccinations,
                 critical care, all types of surgeries, in-house radiology &amp; blood tests, grooming
-                &amp; spa, doorstep services, and a fully stocked pet store — all under one roof. We
-                also provide 24/7 online consultation for emergencies.
+                &amp; spa, doorstep services, and a fully stocked pet store — all under one roof.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center gap-2 text-slate-700">
-                  <CheckCircle className="h-5 w-5 text-ocean-700" />
-                  <span className="text-sm font-medium">10+ Years of Service</span>
-                </div>
-                <div className="flex items-center gap-2 text-slate-700">
-                  <CheckCircle className="h-5 w-5 text-ocean-700" />
-                  <span className="text-sm font-medium">15,000+ Pets Treated</span>
-                </div>
-              </div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -218,10 +196,6 @@ export default function About() {
                 alt="Veterinarian with a pet at Vizag Animal Hospital"
                 className="rounded-2xl shadow-xl w-full object-cover"
               />
-              <div className="absolute -bottom-6 -left-6 bg-ocean-700 text-white rounded-2xl p-6 shadow-lg hidden sm:block">
-                <div className="text-3xl font-bold font-heading">2015</div>
-                <div className="text-sm text-ocean-100">Year Founded</div>
-              </div>
             </motion.div>
           </div>
         </Container>
@@ -279,7 +253,7 @@ export default function About() {
           <SectionTitle
             eyebrow="What We Stand For"
             title="Our Core Values"
-            subtitle="The principles that guide everything we do — from routine checkups to emergency surgeries."
+            subtitle="The principles that guide everything we do — from routine checkups to complex surgeries."
           />
           <motion.div
             variants={containerStagger}

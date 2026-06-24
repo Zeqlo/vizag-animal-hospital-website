@@ -5,8 +5,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import {
-  Phone, Mail, MapPin, Clock, MessageCircle, Send,
-  Facebook, Instagram, Siren, CheckCircle,
+  Phone, MapPin, Clock, MessageCircle, Send,
+  Facebook, Instagram, CheckCircle,
 } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
@@ -17,7 +17,6 @@ import { clinicInfo } from '@/data/clinicInfo'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Enter a valid email').optional().or(z.literal('')),
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit Indian mobile number'),
   message: z.string().min(10, 'Message must be at least 10 characters'),
 })
@@ -78,10 +77,68 @@ export default function Contact() {
         </Container>
       </section>
 
-      <Section bg="white">
+      {/* Dominant Call / WhatsApp CTA */}
+      <Section bg="white" className="!pt-10 sm:!pt-12">
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mx-auto max-w-3xl text-center"
+          >
+            <div className="rounded-3xl bg-gradient-to-br from-ocean-50 via-white to-coral-50 border-2 border-ocean-100 p-8 sm:p-10 shadow-sm">
+              <h2 className="text-3xl sm:text-4xl font-bold font-heading text-slate-900 mb-6">
+                Call or WhatsApp Us
+              </h2>
+
+              {/* Big CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+                <a
+                  href={`tel:${clinicInfo.phone}`}
+                  className="inline-flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-coral-500 text-white text-lg font-bold shadow-lg shadow-coral-500/30 hover:bg-coral-600 hover:shadow-xl transition-all duration-200"
+                >
+                  <Phone className="h-6 w-6" />
+                  Call Now
+                </a>
+                <a
+                  href={`https://wa.me/${clinicInfo.whatsapp.replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-green-500 text-white text-lg font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 hover:shadow-xl transition-all duration-200"
+                >
+                  <MessageCircle className="h-6 w-6" />
+                  WhatsApp
+                </a>
+              </div>
+
+              {/* Secondary Numbers */}
+              <div className="border-t border-slate-200 pt-6">
+                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+                  Also Available On:
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                  {clinicInfo.secondaryPhones.map((ph) => (
+                    <a
+                      key={ph}
+                      href={`tel:${ph}`}
+                      className="inline-flex items-center gap-2 text-lg font-semibold text-ocean-700 hover:text-ocean-900 transition-colors"
+                    >
+                      <Phone className="h-4 w-4" />
+                      {ph}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </Container>
+      </Section>
+
+      {/* Contact Info + Form */}
+      <Section bg="white" className="!pt-10">
         <Container>
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Contact Info */}
+            {/* Contact Info Sidebar */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -142,39 +199,7 @@ export default function Contact() {
                     </div>
                   </Card>
                 ))}
-
-                <Card className="p-5 flex items-start gap-4">
-                  <div className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-xl bg-ocean-100">
-                    <Mail className="h-5 w-5 text-ocean-700" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-slate-900 mb-1">Email</h3>
-                    <a href={`mailto:${clinicInfo.email}`} className="text-sm text-slate-600 hover:text-ocean-700 transition-colors break-all">
-                      {clinicInfo.email}
-                    </a>
-                    <p className="text-xs text-slate-400 mt-1">(Placeholder — update with real email)</p>
-                  </div>
-                </Card>
               </div>
-
-              {/* Emergency Card */}
-              <Card className="p-6 bg-coral-50 border-coral-200">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-xl bg-coral-200">
-                    <Siren className="h-5 w-5 text-coral-700" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold font-heading text-slate-900">24/7 Online Consultation</h3>
-                    <p className="text-xs text-slate-600">Emergency online consultation available 24/7</p>
-                  </div>
-                </div>
-                <a
-                  href={`tel:${clinicInfo.phone}`}
-                  className="text-xl font-bold text-coral-600 hover:text-coral-700 transition-colors block mt-2"
-                >
-                  {clinicInfo.phone}
-                </a>
-              </Card>
 
               {/* Social Media */}
               <div>
@@ -257,29 +282,16 @@ export default function Contact() {
                         />
                         <FieldError>{errors.name?.message}</FieldError>
                       </div>
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="phone">Phone *</Label>
-                          <Input
-                            id="phone"
-                            type="tel"
-                            placeholder="9876543210"
-                            error={!!errors.phone}
-                            {...register('phone')}
-                          />
-                          <FieldError>{errors.phone?.message}</FieldError>
-                        </div>
-                        <div>
-                          <Label htmlFor="email">Email (optional)</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="john@example.com"
-                            error={!!errors.email}
-                            {...register('email')}
-                          />
-                          <FieldError>{errors.email?.message}</FieldError>
-                        </div>
+                      <div>
+                        <Label htmlFor="phone">Phone *</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          placeholder="9876543210"
+                          error={!!errors.phone}
+                          {...register('phone')}
+                        />
+                        <FieldError>{errors.phone?.message}</FieldError>
                       </div>
                       <div>
                         <Label htmlFor="message">Message *</Label>
@@ -357,12 +369,12 @@ export default function Contact() {
                     {clinicInfo.hours.map((h, i) => (
                       <tr
                         key={h.day}
-                        className={`border-t border-slate-100 ${h.emergency ? 'bg-coral-50' : i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}
+                        className={`border-t border-slate-100 ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}
                       >
-                        <td className={`px-5 py-3 ${h.emergency ? 'font-bold text-coral-700' : 'text-slate-700'}`}>
+                        <td className="px-5 py-3 text-slate-700">
                           {h.day}
                         </td>
-                        <td className={`px-5 py-3 text-right ${h.emergency ? 'font-bold text-coral-700' : 'text-slate-600'}`}>
+                        <td className="px-5 py-3 text-right text-slate-600">
                           {h.hours}
                         </td>
                       </tr>

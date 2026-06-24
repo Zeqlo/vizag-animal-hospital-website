@@ -17,7 +17,7 @@ import { services } from '@/data/services'
 const appointmentSchema = z.object({
   ownerName: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit Indian mobile number'),
-  petName: z.string().min(1, 'Pet name is required'),
+  petName: z.string().optional(),
   petType: z.enum(['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'], { required_error: 'Please select pet type' }),
   service: z.string().min(1, 'Please select a service'),
   preferredDate: z.string().refine((date) => {
@@ -25,13 +25,22 @@ const appointmentSchema = z.object({
     today.setHours(0, 0, 0, 0)
     return new Date(date) >= today
   }, 'Date cannot be in the past'),
-  timeSlot: z.enum(['Morning (9 AM - 12 PM)', 'Afternoon (12 PM - 3 PM)', 'Evening (3 PM - 9:30 PM)'], { required_error: 'Please select a time slot' }),
+  timeSlot: z.enum([
+    'Morning (9:00 AM - 12:00 PM)',
+    'Afternoon (12:00 PM - 3:00 PM)',
+    'Evening (3:00 PM - 6:00 PM)',
+    'Night (6:00 PM - 9:30 PM)',
+  ], { required_error: 'Please select a time slot' }),
   notes: z.string().optional(),
 })
 
 type AppointmentFormData = z.infer<typeof appointmentSchema>
 
 const todayStr = new Date().toISOString().split('T')[0]
+
+const WHATSAPP_NUMBER = clinicInfo.whatsapp
+const PHONE_TEL = `tel:${WHATSAPP_NUMBER.replace(/\s/g, '')}`
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}`
 
 export default function BookAppointment() {
   const {
@@ -151,7 +160,7 @@ export default function BookAppointment() {
                               <PawPrint className="h-4 w-4" /> Pet
                             </dt>
                             <dd className="font-medium text-slate-900 text-sm text-right">
-                              {submittedData.petName} ({submittedData.petType})
+                              {submittedData.petName ? `${submittedData.petName} (${submittedData.petType})` : submittedData.petType}
                             </dd>
                           </div>
                           <div className="flex justify-between gap-4">
@@ -195,6 +204,36 @@ export default function BookAppointment() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
+                    {/* Call / WhatsApp CTA */}
+                    <Card className="p-6 sm:p-8 mb-6 bg-gradient-to-br from-ocean-50 to-coral-50 border-ocean-200">
+                      <div className="text-center">
+                        <h2 className="text-2xl sm:text-3xl font-bold font-heading text-slate-900 mb-2">
+                          Prefer to call or WhatsApp? Most of our clients do.
+                        </h2>
+                        <p className="text-slate-600 mb-6">
+                          Tap below to reach us directly — we usually respond within minutes.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                          <a href={PHONE_TEL}>
+                            <Button variant="accent" size="lg" className="w-full sm:w-auto">
+                              <Phone className="h-5 w-5 mr-2" />
+                              Call {WHATSAPP_NUMBER}
+                            </Button>
+                          </a>
+                          <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">
+                            <Button variant="secondary" size="lg" className="w-full sm:w-auto border-green-500 text-green-600 hover:bg-green-500 hover:text-white focus:ring-green-400">
+                              <MessageCircle className="h-5 w-5 mr-2" />
+                              WhatsApp {WHATSAPP_NUMBER}
+                            </Button>
+                          </a>
+                        </div>
+                      </div>
+                    </Card>
+
+                    <h2 className="text-lg sm:text-xl font-semibold font-heading text-slate-700 mb-4">
+                      Or fill in the form below and we'll get back to you
+                    </h2>
+
                     <Card className="p-6 sm:p-8">
                       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         {/* Owner & Pet Info */}
@@ -222,10 +261,10 @@ export default function BookAppointment() {
                           </div>
                           <div className="grid sm:grid-cols-2 gap-4">
                             <div>
-                              <Label htmlFor="petName">Pet Name *</Label>
+                              <Label htmlFor="petName">Pet Name (Optional)</Label>
                               <Input
                                 id="petName"
-                                placeholder="e.g. Bruno"
+                                placeholder="Optional - leave blank if unnamed"
                                 error={!!errors.petName}
                                 {...register('petName')}
                               />
@@ -290,9 +329,10 @@ export default function BookAppointment() {
                                   defaultValue=""
                                 >
                                   <option value="" disabled>Select a slot</option>
-                                  <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
-                                  <option value="Afternoon (12 PM - 3 PM)">Afternoon (12 PM - 3 PM)</option>
-                                  <option value="Evening (3 PM - 9:30 PM)">Evening (3 PM - 9:30 PM)</option>
+                                  <option value="Morning (9:00 AM - 12:00 PM)">Morning (9:00 AM - 12:00 PM)</option>
+                                  <option value="Afternoon (12:00 PM - 3:00 PM)">Afternoon (12:00 PM - 3:00 PM)</option>
+                                  <option value="Evening (3:00 PM - 6:00 PM)">Evening (3:00 PM - 6:00 PM)</option>
+                                  <option value="Night (6:00 PM - 9:30 PM)">Night (6:00 PM - 9:30 PM)</option>
                                 </Select>
                                 <FieldError>{errors.timeSlot?.message}</FieldError>
                               </div>
@@ -333,9 +373,7 @@ export default function BookAppointment() {
                   {clinicInfo.hours.map((h) => (
                     <li
                       key={h.day}
-                      className={`flex justify-between items-center py-1.5 border-b border-slate-100 last:border-0 ${
-                        h.emergency ? 'text-coral-600 font-semibold' : 'text-slate-600'
-                      }`}
+                      className="flex justify-between items-center py-1.5 border-b border-slate-100 last:border-0 text-slate-600"
                     >
                       <span>{h.day}</span>
                       <span className="text-right">{h.hours}</span>
@@ -344,28 +382,25 @@ export default function BookAppointment() {
                 </ul>
               </Card>
 
-              {/* Emergency Contact */}
-              <Card className="p-6 bg-coral-50 border-coral-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Phone className="h-5 w-5 text-coral-600" />
-                  <h3 className="font-bold font-heading text-slate-900">24/7 Emergency</h3>
+              {/* Contact Us */}
+              <Card className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Phone className="h-5 w-5 text-ocean-700" />
+                  <h3 className="font-bold font-heading text-slate-900">Contact Us</h3>
                 </div>
-                <p className="text-sm text-slate-700 mb-3 font-medium">
-                  24/7 Emergency: Online Consultation Only — Call or WhatsApp +91 90141 76278
-                </p>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                   <a
-                    href={`tel:${clinicInfo.emergencyPhone}`}
-                    className="text-lg font-bold text-coral-600 hover:text-coral-700 transition-colors flex items-center gap-2"
+                    href={`tel:${clinicInfo.phone.replace(/\s/g, '')}`}
+                    className="text-base font-semibold text-ocean-700 hover:text-ocean-800 transition-colors flex items-center gap-2"
                   >
                     <Phone className="h-4 w-4" />
-                    {clinicInfo.emergencyPhone}
+                    {clinicInfo.phone}
                   </a>
                   <a
                     href={`https://wa.me/${clinicInfo.whatsapp.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-semibold text-green-600 hover:text-green-700 transition-colors flex items-center gap-2"
+                    className="text-base font-semibold text-green-600 hover:text-green-700 transition-colors flex items-center gap-2"
                   >
                     <MessageCircle className="h-4 w-4" />
                     WhatsApp Us

@@ -4,26 +4,24 @@ import { Link } from "react-router-dom"
 import {
   Award,
   Activity,
-  Siren,
   PawPrint,
   Shield,
   Heart,
   ArrowRight,
   Calendar,
   Stethoscope,
+  Phone,
+  MessageCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Container } from "@/components/ui/Container"
 import { Section } from "@/components/ui/Section"
 import { SectionTitle } from "@/components/ui/SectionTitle"
 import { ServiceCard } from "@/components/common/ServiceCard"
-import { TeamMemberCard } from "@/components/common/TeamMemberCard"
 import { TestimonialCard } from "@/components/common/TestimonialCard"
-import { StatCounter } from "@/components/common/StatCounter"
-import { EmergencyBanner } from "@/components/common/EmergencyBanner"
+import { GoogleReviews } from "@/components/common/GoogleReviews"
 import { ProductCard } from "@/components/common/ProductCard"
 import { featuredServices } from "@/data/services"
-import { teamMembers } from "@/data/team"
 import { testimonials } from "@/data/testimonials"
 import { clinicInfo } from "@/data/clinicInfo"
 import { products } from "@/data/products"
@@ -40,9 +38,9 @@ const whyChooseUs = [
     description: "State-of-the-art diagnostic and surgical equipment for accurate, effective treatment.",
   },
   {
-    icon: Siren,
-    title: "24/7 Online Consultation",
-    description: "Round-the-clock online consultation for pet emergencies because pet emergencies don't wait for office hours.",
+    icon: Stethoscope,
+    title: "Modern Facility",
+    description: "A clean, well-equipped clinic with modern examination rooms, surgical suites, and diagnostics for the best care.",
   },
   {
     icon: PawPrint,
@@ -74,10 +72,13 @@ const itemFade = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 }
 
+// WhatsApp number digits only for wa.me link
+const whatsappNumber = "919014176278"
+
 export default function Home() {
-  const vets = teamMembers.filter((m) => m.role === "veterinarian").slice(0, 3)
   const featuredProducts = products.filter((p) => p.featured).slice(0, 4)
   const topTestimonials = testimonials.slice(0, 3)
+  const topServices = featuredServices.slice(0, 5)
 
   return (
     <>
@@ -85,7 +86,7 @@ export default function Home() {
         <title>Vizag Animal Hospital & Store | Visakhapatnam</title>
         <meta
           name="description"
-          content="Vizag Animal Hospital & Store is a full-service veterinary hospital and pet store in Visakhapatnam (Vizag) offering expert pet care, surgery, diagnostics, grooming, and quality pet products. 24/7 online emergency consultation available."
+          content="Vizag Animal Hospital & Store is a full-service veterinary hospital and pet store in Visakhapatnam (Vizag) offering expert pet care, surgery, diagnostics, grooming, and quality pet products."
         />
       </Helmet>
 
@@ -148,20 +149,41 @@ export default function Home() {
               </Link>
             </motion.div>
 
+            {/* Phone + WhatsApp CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-4 flex flex-col sm:flex-row gap-4"
+            >
+              <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`}>
+                <Button variant="primary" size="lg" className="w-full sm:w-auto">
+                  <Phone className="h-5 w-5" />
+                  Call {clinicInfo.phone}
+                </Button>
+              </a>
+              <a
+                href={`https://wa.me/${whatsappNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  variant="outline-white"
+                  size="lg"
+                  className="w-full sm:w-auto !border-green-500 !text-green-50 hover:!bg-green-500 hover:!text-white"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  WhatsApp Us
+                </Button>
+              </a>
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.5 }}
               className="mt-12 flex flex-wrap items-center gap-6 text-white/90"
             >
-              <div className="flex items-center gap-2">
-                <Stethoscope className="h-5 w-5" />
-                <span className="text-sm font-medium">8+ Veterinary Services</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Siren className="h-5 w-5" />
-                <span className="text-sm font-medium">24/7 Online Consultation</span>
-              </div>
               <div className="flex items-center gap-2">
                 <PawPrint className="h-5 w-5" />
                 <span className="text-sm font-medium">Pet Store Onsite</span>
@@ -170,9 +192,6 @@ export default function Home() {
           </div>
         </Container>
       </section>
-
-      {/* Emergency Banner */}
-      <EmergencyBanner />
 
       {/* Featured Services */}
       <Section bg="white">
@@ -183,7 +202,7 @@ export default function Home() {
             subtitle="From routine checkups to advanced surgery, we provide comprehensive care for your beloved pets."
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredServices.map((service, index) => (
+            {topServices.map((service, index) => (
               <ServiceCard key={service.slug} service={service} index={index} />
             ))}
           </div>
@@ -235,60 +254,6 @@ export default function Home() {
         </Container>
       </Section>
 
-      {/* Stats Counter */}
-      <Section bg="ocean" className="bg-ocean-900">
-        <Container>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <StatCounter
-              value={clinicInfo.stats.yearsExperience}
-              label="Years of Experience"
-              index={0}
-            />
-            <StatCounter
-              value={clinicInfo.stats.petsTreated}
-              label="Pets Treated"
-              suffix="+"
-              index={1}
-            />
-            <StatCounter
-              value={clinicInfo.stats.happyClients}
-              label="Happy Pet Parents"
-              suffix="+"
-              index={2}
-            />
-            <StatCounter
-              value={clinicInfo.stats.services}
-              label="Services Offered"
-              index={3}
-            />
-          </div>
-        </Container>
-      </Section>
-
-      {/* Team Preview */}
-      <Section bg="white">
-        <Container>
-          <SectionTitle
-            eyebrow="Our Team"
-            title="Meet Our Team"
-            subtitle="Dedicated veterinarians and pet care professionals who treat your pets like family."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vets.map((member, index) => (
-              <TeamMemberCard key={member.id} member={member} index={index} />
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link to="/team">
-              <Button variant="secondary" size="lg">
-                Meet the Full Team
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
-        </Container>
-      </Section>
-
       {/* Testimonials */}
       <Section bg="slate">
         <Container>
@@ -302,6 +267,18 @@ export default function Home() {
               <TestimonialCard key={testimonial.id} testimonial={testimonial} index={index} />
             ))}
           </div>
+        </Container>
+      </Section>
+
+      {/* Google Reviews */}
+      <Section bg="slate">
+        <Container>
+          <SectionTitle
+            eyebrow="Reviews"
+            title="What People Say"
+            subtitle="See what clients are saying about Vizag Animal Hospital on Google."
+          />
+          <GoogleReviews />
         </Container>
       </Section>
 

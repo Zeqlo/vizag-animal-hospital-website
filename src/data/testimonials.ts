@@ -16,9 +16,9 @@ export const testimonials: Testimonial[] = [
     petName: "Bruno",
     petType: "Dog (Labrador)",
     rating: 5,
-    text: "Dr. Ramesh and his team saved my Bruno when he had a severe stomach infection. The 24/7 emergency service was a blessing. They were compassionate, professional, and kept us updated throughout the night. Bruno is back to his playful self!",
+    text: "Dr. Ramesh and his team saved my Bruno when he had a severe stomach infection. They were compassionate and professional. Bruno is back to his playful self!",
     date: "2025-04-15",
-    service: "Emergency & Critical Care",
+    service: "Critical Care & Management",
   },
   {
     id: "t2",

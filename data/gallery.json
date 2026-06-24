@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "title": "Modern Treatment Room",
+    "category": "Clinic Facilities",
+    "image": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 2,
+    "title": "State-of-the-Art Facility",
+    "category": "Clinic Facilities",
+    "image": "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 3,
+    "title": "Happy Golden Retriever",
+    "category": "Happy Pets",
+    "image": "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 4,
+    "title": "Smiling Pup Post-Checkup",
+    "category": "Happy Pets",
+    "image": "https://images.unsplash.com/photo-1583512603805-3cc40b814acc?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 5,
+    "title": "Cute Cat Visitor",
+    "category": "Happy Pets",
+    "image": "https://images.unsplash.com/photo-1576201836106-db1758fd1c3e?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 6,
+    "title": "Pet Adoption Drive",
+    "category": "Events",
+    "image": "https://images.unsplash.com/photo-1518791841217-8f162571bbb4?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 7,
+    "title": "Community Pet Camp",
+    "category": "Events",
+    "image": "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 8,
+    "title": "Spa Day Grooming",
+    "category": "Grooming",
+    "image": "https://images.unsplash.com/photo-1591946614720-90a587da4f36?w=600&h=400&fit=crop"
+  },
+  {
+    "id": 9,
+    "title": "Fresh Trim & Style",
+    "category": "Grooming",
+    "image": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&h=400&fit=crop"
+  }
+]

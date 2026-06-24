@@ -2,12 +2,9 @@ import { motion } from "framer-motion"
 import { Helmet } from "react-helmet-async"
 import { Link } from "react-router-dom"
 import {
-  Siren,
   Phone,
-  ArrowRight,
   Calendar,
   HelpCircle,
-  CheckCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
@@ -18,13 +15,6 @@ import { Badge } from "@/components/ui/Badge"
 import { ServiceCard } from "@/components/common/ServiceCard"
 import { services } from "@/data/services"
 import { clinicInfo } from "@/data/clinicInfo"
-
-const emergencyFeatures = [
-  "24/7 online consultation for emergencies",
-  "Trauma & accident care guidance",
-  "Poisoning treatment advice",
-  "Critical care management for small & large animals",
-]
 
 export default function Services() {
   return (
@@ -54,7 +44,7 @@ export default function Services() {
             </h1>
             <p className="mt-4 text-lg text-ocean-100 max-w-2xl mx-auto">
               Comprehensive, compassionate care for every stage of your pet's life — from routine
-              checkups to emergency surgery and everything in between.
+              checkups to advanced surgery and everything in between.
             </p>
           </motion.div>
         </Container>
@@ -73,81 +63,6 @@ export default function Services() {
               <ServiceCard key={service.slug} service={service} index={index} />
             ))}
           </div>
-        </Container>
-      </Section>
-
-      {/* Emergency Service Highlight */}
-      <Section bg="slate">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5 }}
-          >
-            <Card className="overflow-hidden border-0 shadow-xl">
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                <div className="bg-gradient-to-br from-coral-600 to-coral-500 p-8 sm:p-10">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm mb-5">
-                    <Siren className="h-7 w-7 text-white" />
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold font-heading text-white mb-3">
-                    24/7 Online Consultation
-                  </h3>
-                  <p className="text-coral-50 mb-6">
-                    Pet emergencies don't wait for office hours. Our 24/7 online consultation
-                    service ensures you can reach a veterinarian anytime for urgent guidance. If
-                    your pet needs immediate help, call or WhatsApp us right away.
-                  </p>
-                  <div className="space-y-3 mb-6">
-                    {emergencyFeatures.map((feature, i) => (
-                      <div key={i} className="flex items-center gap-2 text-white">
-                        <CheckCircle className="h-5 w-5 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <a href={`tel:${clinicInfo.phone}`}>
-                    <Button variant="outline-white" size="lg">
-                      <Phone className="h-5 w-5" />
-                      {clinicInfo.phone}
-                    </Button>
-                  </a>
-                </div>
-                <div className="bg-ocean-900 p-8 sm:p-10 flex flex-col justify-center">
-                  <h4 className="text-xl font-semibold font-heading text-white mb-4">
-                    When to Seek Emergency Care
-                  </h4>
-                  <ul className="space-y-3 text-ocean-100">
-                    <li className="flex items-start gap-2">
-                      <span className="text-coral-400 mt-1">•</span>
-                      Difficulty breathing or choking
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-coral-400 mt-1">•</span>
-                      Severe bleeding or trauma from accidents
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-coral-400 mt-1">•</span>
-                      Suspected poisoning or ingestion of toxic substances
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-coral-400 mt-1">•</span>
-                      Sudden collapse, seizures, or paralysis
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-coral-400 mt-1">•</span>
-                      Persistent vomiting or diarrhea with lethargy
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-coral-400 mt-1">•</span>
-                      Difficulty urinating or straining
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
         </Container>
       </Section>
 

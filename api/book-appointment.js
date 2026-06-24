@@ -154,6 +154,19 @@ export default async function handler(req, res) {
       return res.end(JSON.stringify({ status: "error", message: "Missing required fields" }));
     }
 
+    // Also notify clinic via Telegram
+    // Fire-and-forget: do not await or catch errors
+    try {
+      const telegramNotifyUrl = `${req.headers["x-forwarded-proto"] || "https"}://${req.headers.host}/api/telegram-notify`;
+      fetch(telegramNotifyUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ownerName, phone, petName, petType, service, preferredDate, timeSlot, notes }),
+      }).catch(() => {});
+    } catch (_) {
+      // Ignore — fire-and-forget
+    }
+
     // Get VetsonCloud auth (auto-login with cached token)
     const auth = await getVetsonCloudAuth();
 

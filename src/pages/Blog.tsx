@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
-import { Mail, Newspaper } from 'lucide-react'
+import { Bell, Newspaper } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
@@ -104,7 +104,7 @@ export default function Blog() {
               transition={{ duration: 0.4 }}
             >
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-coral-100 mb-5">
-                <Mail className="h-7 w-7 text-coral-600" />
+                <Bell className="h-7 w-7 text-coral-600" />
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold font-heading text-slate-900 mb-3">
                 Subscribe to Our Newsletter

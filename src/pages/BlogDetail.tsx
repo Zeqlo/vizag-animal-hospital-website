@@ -1,18 +1,20 @@
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { Link, useParams } from 'react-router-dom'
-import { Calendar, Clock, ArrowLeft, Facebook, MessageCircle, User } from 'lucide-react'
+import { Clock, ArrowLeft, Facebook, MessageCircle } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { BlogCard } from '@/components/common/BlogCard'
 import { blogPosts } from '@/data/blogPosts'
-import { formatDate } from '@/lib/utils'
+
+// Extend the BlogPost type locally to support optional youtubeUrl
+type BlogPostWithYouTube = typeof blogPosts[number] & { youtubeUrl?: string }
 
 export default function BlogDetail() {
   const { slug } = useParams<{ slug: string }>()
-  const post = blogPosts.find((p) => p.slug === slug)
+  const post = blogPosts.find((p) => p.slug === slug) as BlogPostWithYouTube | undefined
 
   if (!post) {
     return (
@@ -44,13 +46,50 @@ export default function BlogDetail() {
 
   const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
 
+  // Extract YouTube URL from the post (either from youtubeUrl field or from content [youtube:...] blocks)
+  const youtubeUrl = (post as BlogPostWithYouTube).youtubeUrl
+
   // Split content into blocks
   const contentBlocks = post.content.split('\n\n')
-  const renderBlocks: { type: 'paragraph' | 'list'; items?: string[]; text?: string }[] = []
+  const renderBlocks: {
+    type: 'paragraph' | 'list' | 'image' | 'youtube'
+    items?: string[]
+    text?: string
+    src?: string
+    alt?: string
+    url?: string
+  }[] = []
 
   let currentList: string[] = []
   contentBlocks.forEach((block) => {
     const trimmed = block.trim()
+
+    // Check for [image:url|alt text] block
+    const imageMatch = trimmed.match(/^\[image:([^\]|]+)(?:\|([^\]]*))?\]$/)
+    if (imageMatch) {
+      if (currentList.length > 0) {
+        renderBlocks.push({ type: 'list', items: currentList })
+        currentList = []
+      }
+      renderBlocks.push({
+        type: 'image',
+        src: imageMatch[1].trim(),
+        alt: imageMatch[2]?.trim() ?? '',
+      })
+      return
+    }
+
+    // Check for [youtube:url] block
+    const youtubeMatch = trimmed.match(/^\[youtube:\s*(\S+)\s*\]$/)
+    if (youtubeMatch) {
+      if (currentList.length > 0) {
+        renderBlocks.push({ type: 'list', items: currentList })
+        currentList = []
+      }
+      renderBlocks.push({ type: 'youtube', url: youtubeMatch[1].trim() })
+      return
+    }
+
     if (/^\d+\.\s/.test(trimmed)) {
       // This block starts a numbered list — it may contain multiple items separated by \n
       const items = trimmed.split('\n').filter((l) => /^\d+\.\s/.test(l.trim()))
@@ -73,6 +112,20 @@ export default function BlogDetail() {
   })
   if (currentList.length > 0) {
     renderBlocks.push({ type: 'list', items: currentList })
+  }
+
+  // Convert a YouTube URL to an embeddable URL
+  const getYouTubeEmbedUrl = (url: string): string => {
+    // Handle youtu.be short links
+    const shortMatch = url.match(/youtu\.be\/([\w-]+)/)
+    if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`
+    // Handle watch?v= links
+    const watchMatch = url.match(/[?&]v=([\w-]+)/)
+    if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`
+    // Handle embed links
+    if (url.includes('/embed/')) return url
+    // Fallback: return as-is
+    return url
   }
 
   return (
@@ -110,14 +163,6 @@ export default function BlogDetail() {
               </h1>
               <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-slate-500">
                 <span className="flex items-center gap-1.5">
-                  <User className="h-4 w-4" />
-                  {post.author}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4" />
-                  {formatDate(post.date)}
-                </span>
-                <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />
                   {post.readTime}
                 </span>
@@ -150,6 +195,19 @@ export default function BlogDetail() {
                 {post.excerpt}
               </p>
 
+              {/* YouTube video player (from youtubeUrl field) — rendered above content */}
+              {youtubeUrl && (
+                <div className="relative w-full mb-8" style={{ aspectRatio: '16 / 9' }}>
+                  <iframe
+                    src={getYouTubeEmbedUrl(youtubeUrl)}
+                    title={post.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full rounded-xl"
+                  />
+                </div>
+              )}
+
               <div className="space-y-5">
                 {renderBlocks.map((block, i) => {
                   if (block.type === 'list' && block.items) {
@@ -167,6 +225,30 @@ export default function BlogDetail() {
                           </li>
                         ))}
                       </ol>
+                    )
+                  }
+                  if (block.type === 'image' && block.src) {
+                    return (
+                      <div key={i} className="flex justify-center my-6">
+                        <img
+                          src={block.src}
+                          alt={block.alt}
+                          className="rounded-xl max-w-full h-auto"
+                        />
+                      </div>
+                    )
+                  }
+                  if (block.type === 'youtube' && block.url) {
+                    return (
+                      <div key={i} className="relative w-full my-6" style={{ aspectRatio: '16 / 9' }}>
+                        <iframe
+                          src={getYouTubeEmbedUrl(block.url)}
+                          title={post.title}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="absolute inset-0 w-full h-full rounded-xl"
+                        />
+                      </div>
                     )
                   }
                   return (

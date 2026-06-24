@@ -46,11 +46,6 @@ export function TeamMemberCard({ member, index = 0 }: TeamMemberCardProps) {
         )}
         <p className="text-sm text-coral-600 font-semibold mb-2">{member.specialization}</p>
         <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">{member.bio}</p>
-        {!isComingSoon && (
-          <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-sm">
-            <span className="text-slate-500">{member.experience} years experience</span>
-          </div>
-        )}
       </div>
     </motion.div>
   )

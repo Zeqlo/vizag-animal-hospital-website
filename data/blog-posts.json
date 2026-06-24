@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "5-signs-your-dog-needs-a-vet-visit",
+    "title": "5 Signs Your Dog Needs a Vet Visit",
+    "excerpt": "Learn to recognize the subtle signs that indicate your dog may need professional veterinary attention. Early detection can save lives.",
+    "content": "As a pet parent, knowing when your dog needs veterinary attention can be the difference between a minor issue and a major health crisis. Here are five key signs to watch for:\n\n1. Changes in Appetite: If your dog suddenly stops eating or drinking, it could indicate anything from dental pain to a serious illness.\n\n2. Lethargy and Weakness: Dogs are naturally energetic. If your usually playful pup seems listless, it's time for a checkup.\n\n3. Vomiting or Diarrhea: Repeated vomiting or diarrhea lasting more than 24 hours requires immediate veterinary attention.\n\n4. Difficulty Breathing: Respiratory distress is a medical emergency.\n\n5. Sudden Weight Changes: Unexplained weight loss or gain can indicate thyroid issues, diabetes, or parasites.",
+    "category": "Dog Care",
+    "readTime": "5 min read",
+    "image": "https://images.unsplash.com/photo-1551717743-49959835b87f?w=800&h=400&fit=crop"
+  },
+  {
+    "slug": "vaccination-schedule-for-puppies",
+    "title": "Complete Vaccination Schedule for Puppies",
+    "excerpt": "A month-by-month guide to your puppy's vaccination needs. Protect your furry friend from day one.",
+    "content": "Vaccinations are one of the most important things you can do to protect your puppy's health.\n\n6-8 Weeks: DHPP first dose\n\n10-12 Weeks: DHPP second dose, Leptospirosis\n\n14-16 Weeks: DHPP final dose, Rabies first dose\n\nAnnual Boosters: DHPP and Rabies boosters",
+    "category": "Dog Care",
+    "readTime": "7 min read",
+    "image": "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=800&h=400&fit=crop"
+  },
+  {
+    "slug": "cat-grooming-101",
+    "title": "Cat Grooming 101: Keeping Your Feline Friend Fabulous",
+    "excerpt": "Essential grooming tips for cat owners. From brushing to nail trimming, here's everything you need to know.",
+    "content": "While cats are excellent self-groomers, they still need our help to stay in top condition.\n\nBrushing: Short-haired cats once a week, long-haired cats daily.\n\nBathing: Once every 4-6 weeks with cat-specific shampoo.\n\nNail Trimming: Every 2-3 weeks using cat-specific clippers.",
+    "category": "Cat Care",
+    "readTime": "6 min read",
+    "image": "https://images.unsplash.com/photo-1518791841217-8f162571bbb4?w=800&h=400&fit=crop"
+  },
+  {
+    "slug": "understanding-pet-nutrition",
+    "title": "Understanding Pet Nutrition: A Complete Guide",
+    "excerpt": "What should you feed your pet? Learn about balanced nutrition, reading food labels, and choosing the right diet.",
+    "content": "Proper nutrition is the foundation of your pet's health.\n\nUnderstanding Labels: Look for AAFCO certification and named animal protein as first ingredient.\n\nLife Stage Nutrition: Puppy/kitten, adult, and senior formulas differ significantly.\n\nPortion Control: Overfeeding is the leading cause of pet obesity.",
+    "category": "Nutrition",
+    "readTime": "8 min read",
+    "image": "https://images.unsplash.com/photo-1589924691995-400dc9ecc860?w=800&h=400&fit=crop"
+  },
+  {
+    "slug": "emergency-first-aid-for-pets",
+    "title": "Emergency First Aid for Pets: What Every Owner Should Know",
+    "excerpt": "Accidents happen. Learn basic pet first aid that could save your furry friend's life before you reach the vet.",
+    "content": "In an emergency, knowing basic first aid can stabilize your pet before you reach the clinic.\n\nBleeding: Apply firm pressure with a clean cloth.\n\nChoking: Check inside the mouth for foreign objects.\n\nPoisoning: Do NOT induce vomiting without consulting a vet.",
+    "category": "Emergency Tips",
+    "readTime": "10 min read",
+    "image": "https://images.unsplash.com/photo-1583511655826-05700d52f4d9?w=800&h=400&fit=crop"
+  },
+  {
+    "slug": "monsoon-care-tips-for-pets",
+    "title": "Monsoon Care Tips for Pets in India",
+    "excerpt": "Rainy season brings unique challenges for pet owners. Here's how to keep your pets healthy and happy during the monsoon.",
+    "content": "The Indian monsoon brings relief from the heat but also creates health challenges for pets.\n\nSkin & Coat Care: Dry your pet thoroughly after walks in the rain.\n\nTick & Flea Prevention: Check your pet daily after walks.\n\nDiet & Nutrition: Add immune-boosting supplements.",
+    "category": "General Pet Health",
+    "readTime": "7 min read",
+    "image": "https://images.unsplash.com/photo-1438032005730-c779502df39b?w=800&h=400&fit=crop"
+  },
+  {
+    "slug": "spaying-and-neutering-benefits",
+    "title": "Spaying and Neutering: Benefits, Myths, and Recovery",
+    "excerpt": "Everything you need to know about spaying/neutering your pet, including health benefits and post-surgery care.",
+    "content": "Spaying and neutering are among the most common surgical procedures we perform.\n\nHealth Benefits: Reduces risk of certain cancers and prevents pyometra.\n\nCommon Myths: My pet won't get fat from the surgery itself.\n\nPost-Surgery Care: Keep your pet indoors and calm for 7-10 days.",
+    "category": "General Pet Health",
+    "readTime": "9 min read",
+    "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=400&fit=crop"
+  },
+  {
+    "slug": "dental-health-month-guide",
+    "title": "Pet Dental Health: A Month-by-Month Guide",
+    "excerpt": "February is Pet Dental Health Month! Here's how to maintain your pet's oral hygiene year-round.",
+    "content": "By age 3, 80% of dogs and 70% of cats show signs of dental disease.\n\nBrushing Tips: Start slow with pet-specific toothpaste.\n\nSigns of Problems: Bad breath, yellow tartar, red gums.\n\nProfessional Cleanings: Schedule dental checkups twice yearly.",
+    "category": "General Pet Health",
+    "readTime": "6 min read",
+    "image": "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=800&h=400&fit=crop"
+  }
+]

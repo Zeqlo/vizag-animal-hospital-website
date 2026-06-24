@@ -18,6 +18,7 @@ import BlogDetail from "@/pages/BlogDetail"
 import FAQ from "@/pages/FAQ"
 import Contact from "@/pages/Contact"
 import NotFound from "@/pages/NotFound"
+import Admin from "@/pages/Admin"
 
 function App() {
   const location = useLocation()
@@ -40,6 +41,7 @@ function App() {
           <Route path="/blog/:slug" element={<BlogDetail />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AnimatePresence>

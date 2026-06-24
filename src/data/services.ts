@@ -36,7 +36,7 @@ export const services: Service[] = [
     title: "Critical Care & Management",
     shortDescription: "Expert critical care and management for both small and large animals.",
     longDescription:
-      "Our critical care and management service covers urgent medical situations for both small and large animals. From trauma and poisoning to sudden illness and post-surgical monitoring, our experienced team provides timely and effective care. We also offer 24/7 online consultation for emergencies.",
+      "Our critical care and management service covers urgent medical situations for both small and large animals. From trauma and poisoning to sudden illness and post-surgical monitoring, our experienced team provides timely and effective care.",
     icon: "Siren",
     features: [
       "Trauma & accident care",
@@ -128,15 +128,14 @@ export const services: Service[] = [
   },
   {
     slug: "radiology-blood-tests",
-    title: "In-house Radiology & Blood Tests",
-    shortDescription: "In-house diagnostic services including X-ray, ultrasound, echo, and blood tests.",
+    title: "Blood Tests & Diagnostic Imaging",
+    shortDescription: "In-house diagnostic services including blood tests, ultrasound scanning, echo, and comprehensive lab work.",
     longDescription:
-      "Our in-house diagnostic facility provides quick and accurate results. With digital X-ray, ultrasound scanning, echo, blood analyzers, and microscopy, we can diagnose conditions rapidly and start treatment without delay. Having these services in-house means faster diagnosis and better outcomes for your pet.",
+      "Our in-house diagnostic facility provides quick and accurate results. With blood analyzers, ultrasound scanning, echo, and microscopy, we can diagnose conditions rapidly and start treatment without delay. Having these services in-house means faster diagnosis and better outcomes for your pet.",
     icon: "Microscope",
     features: [
       "Complete blood count (CBC)",
       "Blood chemistry panel",
-      "Digital X-ray imaging",
       "Ultrasound scanning",
       "Echo (Echocardiography)",
       "Urine & stool analysis",

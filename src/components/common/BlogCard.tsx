@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
-import { Clock, Calendar } from "lucide-react"
+import { Clock } from "lucide-react"
 import type { BlogPost } from "@/data/blogPosts"
 import { Badge } from "@/components/ui/Badge"
-import { formatDate } from "@/lib/utils"
 
 interface BlogCardProps {
   post: BlogPost
@@ -40,12 +39,9 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
             {post.title}
           </h3>
           <p className="text-sm text-slate-600 mb-4 line-clamp-2">{post.excerpt}</p>
-          <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100">
-            <span className="font-medium">{post.author}</span>
-            <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              {formatDate(post.date)}
-            </span>
+          <div className="flex items-center gap-1 text-xs text-slate-500 pt-3 border-t border-slate-100">
+            <Clock className="h-3 w-3" />
+            {post.readTime}
           </div>
         </div>
       </Link>
