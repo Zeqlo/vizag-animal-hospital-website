@@ -14,7 +14,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
+      transition={{ duration: 0.3, delay: Math.min(index * 0.03, 0.3) }}
       className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 group"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
@@ -24,10 +24,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
-        {product.originalPrice && (
-          <div className="absolute top-2 left-2">
-            <Badge variant="coral">
-              {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+        {product.inStock && (
+          <div className="absolute top-2 right-2">
+            <Badge variant="slate" className="bg-green-100 text-green-700 border-green-200">
+              In Stock
             </Badge>
           </div>
         )}
@@ -43,17 +43,16 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-lg font-bold text-slate-900">₹{product.price}</span>
-            {product.originalPrice && (
-              <span className="text-xs text-slate-400 line-through ml-1.5">₹{product.originalPrice}</span>
-            )}
           </div>
-          <button
+          <a
+            href={`https://wa.me/919014176278?text=${encodeURIComponent(`Hi, I'm interested in: ${product.name} (₹${product.price})`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-ocean-700 text-white text-xs font-semibold hover:bg-ocean-800 transition-colors active:scale-95"
-            onClick={(e) => e.preventDefault()}
           >
             <ShoppingBag className="h-3.5 w-3.5" />
-            Add
-          </button>
+            Enquire
+          </a>
         </div>
       </div>
     </motion.div>

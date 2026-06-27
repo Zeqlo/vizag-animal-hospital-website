@@ -76,7 +76,7 @@ const itemFade = {
 const whatsappNumber = "919014176278"
 
 export default function Home() {
-  const featuredProducts = products.filter((p) => p.featured).slice(0, 4)
+  const featuredProducts = products.slice(0, 4)
   const topTestimonials = testimonials.slice(0, 3)
   const topServices = featuredServices.slice(0, 5)
 

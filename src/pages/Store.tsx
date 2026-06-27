@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Helmet } from "react-helmet-async"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
-import { MapPin, Scissors, ShoppingBag, Star } from "lucide-react"
+import { MapPin, Scissors, ShoppingBag, Star, Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { products, productCategories, type Product } from "@/data/products"
 import { clinicInfo } from "@/data/clinicInfo"
 import { Button } from "@/components/ui/Button"
@@ -13,13 +13,49 @@ import { SectionTitle } from "@/components/ui/SectionTitle"
 import { Badge } from "@/components/ui/Badge"
 import { ProductCard } from "@/components/common/ProductCard"
 
+const PRODUCTS_PER_PAGE = 24
+
 export default function Store() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const filteredProducts =
-    selectedCategory === "All"
-      ? products
-      : products.filter((p: Product) => p.category === selectedCategory)
+  const filteredProducts = useMemo(() => {
+    let result = products
+
+    if (selectedCategory !== "All") {
+      result = result.filter((p: Product) => p.category === selectedCategory)
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim()
+      result = result.filter(
+        (p: Product) =>
+          p.name.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q)
+      )
+    }
+
+    return result
+  }, [selectedCategory, searchQuery])
+
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE)
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  )
+
+  // Reset to page 1 when filters change
+  const handleCategoryChange = (cat: string) => {
+    setSelectedCategory(cat)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val)
+    setCurrentPage(1)
+  }
 
   return (
     <>
@@ -68,12 +104,24 @@ export default function Store() {
             subtitle="Filter our full range of pet products by category to find exactly what your pet needs."
           />
 
+          {/* Search bar */}
+          <div className="relative max-w-md mx-auto mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-full border border-slate-300 text-sm focus:outline-none focus:border-ocean-500 focus:ring-2 focus:ring-ocean-200 transition-all"
+            />
+          </div>
+
           {/* Category filter buttons - horizontal scroll */}
-          <div className="flex gap-2 overflow-x-auto pb-3 mb-8 -mx-1 px-1 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-3 mb-6 -mx-1 px-1 scrollbar-hide">
             {productCategories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 active:scale-95 ${
                   selectedCategory === cat
                     ? "bg-ocean-700 text-white shadow-md"
@@ -85,17 +133,77 @@ export default function Store() {
             ))}
           </div>
 
+          {/* Results count */}
+          <p className="text-sm text-slate-500 mb-4">
+            Showing {paginatedProducts.length} of {filteredProducts.length} products
+          </p>
+
           {/* Product grid */}
-          {filteredProducts.length > 0 ? (
+          {paginatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-              {filteredProducts.map((product, idx) => (
+              {paginatedProducts.map((product, idx) => (
                 <ProductCard key={product.id} product={product} index={idx} />
               ))}
             </div>
           ) : (
             <p className="text-center text-slate-500 py-12">
-              No products found in this category.
+              No products found. Try a different search or category.
             </p>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-10">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:border-ocean-400 hover:text-ocean-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Prev
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => {
+                  // Show pages around current page, plus first and last
+                  return (
+                    p === 1 ||
+                    p === totalPages ||
+                    Math.abs(p - currentPage) <= 1
+                  )
+                })
+                .map((page, idx, arr) => {
+                  const showEllipsisBefore =
+                    idx > 0 && page - arr[idx - 1] > 1
+
+                  return (
+                    <span key={page} className="flex items-center">
+                      {showEllipsisBefore && (
+                        <span className="px-2 text-slate-400">...</span>
+                      )}
+                      <button
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-10 h-10 rounded-lg text-sm font-semibold transition-all ${
+                          currentPage === page
+                            ? "bg-ocean-700 text-white shadow-md"
+                            : "border border-slate-300 text-slate-700 hover:border-ocean-400 hover:text-ocean-700"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    </span>
+                  )
+                })}
+
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:border-ocean-400 hover:text-ocean-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           )}
         </Container>
       </Section>
