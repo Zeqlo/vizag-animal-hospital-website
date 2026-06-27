@@ -41,8 +41,19 @@ export default function Contact() {
   })
 
   const onSubmit = async (data: ContactFormData) => {
-    console.log(data)
-    await new Promise((r) => setTimeout(r, 1500))
+    try {
+      const response = await fetch('/api/send-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      const result = await response.json()
+      if (!response.ok || result.status === 'error') {
+        console.error('Contact form error:', result.message)
+      }
+    } catch (error) {
+      console.error('Contact form submission error:', error)
+    }
     setIsSuccess(true)
     reset()
   }
