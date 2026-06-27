@@ -1,89 +1,94 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js'
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'blog-posts.json');
+const supabaseUrl = process.env.SUPABASE_URL || ''
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-/**
- * GET /api/blog-posts         — return all posts
- * POST /api/blog-posts        — create or update a post
- * PUT  /api/blog-posts?slug=x — update a post by slug
- * DELETE /api/blog-posts?slug=x — delete post by slug
- *
- * POST body: { title, slug, excerpt?, content, category, readTime, image?, youtubeUrl? }
- * When slug matches an existing post, the post is updated; otherwise a new post is created.
- */
 export default async function handler(req, res) {
   try {
-    let posts = [];
-    try {
-      const raw = await fs.readFile(DATA_FILE, 'utf-8');
-      posts = JSON.parse(raw);
-    } catch {
-      posts = [];
-    }
-
     if (req.method === 'GET') {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json(posts);
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      const posts = (data || []).map(row => ({
+        slug: row.slug,
+        title: row.title,
+        excerpt: row.excerpt || '',
+        content: row.content,
+        category: row.category,
+        readTime: row.readTime,
+        image: row.image || '',
+        youtubeUrl: row.youtubeUrl || undefined,
+      }))
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json(posts)
     }
 
-    if (req.method === 'POST' || req.method === 'PUT') {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      const { title, slug, content, category, readTime, excerpt, image, youtubeUrl } = body;
+    if (req.method === 'POST') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+      const { slug, title, excerpt, content, category, readTime, image, youtubeUrl } = body
 
-      if (!title || !slug || !content || !category || !readTime) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Missing required fields: title, slug, content, category, readTime' });
+      if (!slug || !title || !content) {
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Missing required fields: slug, title, content' })
       }
 
-      const existingIndex = posts.findIndex((p) => p.slug === slug);
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .upsert({
+          slug,
+          title,
+          excerpt: excerpt || title,
+          content,
+          category: category || 'General',
+          readTime: readTime || '5 min read',
+          image: image || '',
+          youtubeUrl: youtubeUrl || null,
+        })
+        .select()
+        .single()
 
-      const postData = {
-        slug,
-        title,
-        excerpt: excerpt || title,
-        content,
-        category,
-        readTime,
-        image: image || '',
-        ...(youtubeUrl ? { youtubeUrl } : {}),
-      };
+      if (error) throw error
 
-      if (existingIndex >= 0) {
-        // Update existing
-        posts[existingIndex] = { ...posts[existingIndex], ...postData };
-      } else {
-        // Create new
-        posts.push(postData);
-      }
-
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-      await fs.writeFile(DATA_FILE, JSON.stringify(posts, null, 2), 'utf-8');
-
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json(postData);
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({
+        slug: data.slug,
+        title: data.title,
+        excerpt: data.excerpt || '',
+        content: data.content,
+        category: data.category,
+        readTime: data.readTime,
+        image: data.image || '',
+        youtubeUrl: data.youtubeUrl || undefined,
+      })
     }
 
     if (req.method === 'DELETE') {
-      const slug = req.query.slug;
+      const slug = req.query.slug
       if (!slug) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Missing slug query parameter' });
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Missing slug query parameter' })
       }
 
-      const filtered = posts.filter((p) => p.slug !== slug);
-      await fs.writeFile(DATA_FILE, JSON.stringify(filtered, null, 2), 'utf-8');
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('slug', slug)
 
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json({ success: true, slug });
+      if (error) throw error
+
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({ success: true, slug })
     }
 
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[api/blog-posts] Error:', message);
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({ error: 'Internal server error', debug: message });
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[api/blog-posts] Error:', message)
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(500).json({ error: 'Internal server error', debug: message })
   }
 }

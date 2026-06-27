@@ -1,78 +1,76 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js'
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'subscribers.json');
+const supabaseUrl = process.env.SUPABASE_URL || ''
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-/**
- * GET /api/subscribers        — return all subscribers
- * POST /api/subscribers       — add a subscriber { email }
- * DELETE /api/subscribers?id=x — delete subscriber by id
- */
 export default async function handler(req, res) {
   try {
-    let subscribers = [];
-    try {
-      const raw = await fs.readFile(DATA_FILE, 'utf-8');
-      subscribers = JSON.parse(raw);
-    } catch {
-      subscribers = [];
-    }
-
     if (req.method === 'GET') {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json(subscribers);
+      const { data, error } = await supabase
+        .from('subscribers')
+        .select('*')
+        .order('subscribedAt', { ascending: false })
+      if (error) throw error
+      const subs = (data || []).map(row => ({
+        id: row.id,
+        email: row.email,
+        subscribedAt: row.subscribedAt,
+      }))
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json(subs)
     }
 
     if (req.method === 'POST') {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      const { email } = body;
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+      const { email } = body
 
       if (!email) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Missing required field: email' });
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Missing required field: email' })
       }
 
-      // Avoid duplicates
-      const existing = subscribers.find((s) => s.email === email);
-      if (existing) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(200).json(existing);
-      }
+      // Use upsert to avoid duplicates (email has unique constraint)
+      const { data, error } = await supabase
+        .from('subscribers')
+        .upsert({ email }, { onConflict: 'email' })
+        .select()
+        .single()
 
-      const newSub = {
-        id: subscribers.length > 0 ? Math.max(...subscribers.map((s) => s.id)) + 1 : 1,
-        email,
-        subscribedAt: new Date().toISOString(),
-      };
+      if (error) throw error
 
-      subscribers.push(newSub);
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-      await fs.writeFile(DATA_FILE, JSON.stringify(subscribers, null, 2), 'utf-8');
-
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(201).json(newSub);
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({
+        id: data.id,
+        email: data.email,
+        subscribedAt: data.subscribedAt,
+      })
     }
 
     if (req.method === 'DELETE') {
-      const id = parseInt(req.query.id, 10);
+      const id = parseInt(req.query.id, 10)
       if (isNaN(id)) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Invalid or missing id query parameter' });
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Invalid or missing id query parameter' })
       }
 
-      const filtered = subscribers.filter((s) => s.id !== id);
-      await fs.writeFile(DATA_FILE, JSON.stringify(filtered, null, 2), 'utf-8');
+      const { error } = await supabase
+        .from('subscribers')
+        .delete()
+        .eq('id', id)
 
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json({ success: true, id });
+      if (error) throw error
+
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({ success: true, id })
     }
 
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[api/subscribers] Error:', message);
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({ error: 'Internal server error', debug: message });
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[api/subscribers] Error:', message)
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(500).json({ error: 'Internal server error', debug: message })
   }
 }

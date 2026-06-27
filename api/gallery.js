@@ -1,74 +1,85 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js'
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'gallery.json');
+const supabaseUrl = process.env.SUPABASE_URL || ''
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-/**
- * GET /api/gallery  — return all gallery items
- * POST /api/gallery — add a new item  { title, category, image, youtubeUrl? }
- * DELETE /api/gallery?id=123 — delete item by id
- */
 export default async function handler(req, res) {
   try {
-    // Ensure data file exists
-    let items = [];
-    try {
-      const raw = await fs.readFile(DATA_FILE, 'utf-8');
-      items = JSON.parse(raw);
-    } catch {
-      items = [];
-    }
-
     if (req.method === 'GET') {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json(items);
+      const { data, error } = await supabase
+        .from('gallery')
+        .select('*')
+        .order('id', { ascending: true })
+      if (error) throw error
+      // Map DB columns to camelCase for frontend
+      const items = (data || []).map(row => ({
+        id: row.id,
+        title: row.title,
+        category: row.category,
+        image: row.image,
+        youtubeUrl: row.youtubeUrl || undefined,
+      }))
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json(items)
     }
 
     if (req.method === 'POST') {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      const { title, category, image, youtubeUrl } = body;
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+      const { title, category, image, youtubeUrl } = body
 
       if (!title || !category || !image) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Missing required fields: title, category, image' });
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Missing required fields: title, category, image' })
       }
 
-      const newItem = {
-        id: items.length > 0 ? Math.max(...items.map((i) => i.id)) + 1 : 1,
-        title,
-        category,
-        image,
-        ...(youtubeUrl ? { youtubeUrl } : {}),
-      };
+      const { data, error } = await supabase
+        .from('gallery')
+        .insert({
+          title,
+          category,
+          image,
+          youtubeUrl: youtubeUrl || null,
+        })
+        .select()
+        .single()
 
-      items.push(newItem);
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-      await fs.writeFile(DATA_FILE, JSON.stringify(items, null, 2), 'utf-8');
+      if (error) throw error
 
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(201).json(newItem);
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(201).json({
+        id: data.id,
+        title: data.title,
+        category: data.category,
+        image: data.image,
+        youtubeUrl: data.youtubeUrl || undefined,
+      })
     }
 
     if (req.method === 'DELETE') {
-      const id = parseInt(req.query.id, 10);
-      if (isNaN(id)) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Invalid or missing id query parameter' });
+      const id = req.query.id
+      if (!id) {
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Missing id query parameter' })
       }
 
-      const filtered = items.filter((i) => i.id !== id);
-      await fs.writeFile(DATA_FILE, JSON.stringify(filtered, null, 2), 'utf-8');
+      const { error } = await supabase
+        .from('gallery')
+        .delete()
+        .eq('id', id)
 
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json({ success: true, id });
+      if (error) throw error
+
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({ success: true, id: Number(id) })
     }
 
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[api/gallery] Error:', message);
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({ error: 'Internal server error', debug: message });
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[api/gallery] Error:', message)
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(500).json({ error: 'Internal server error', debug: message })
   }
 }

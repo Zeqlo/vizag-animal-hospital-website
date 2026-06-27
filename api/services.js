@@ -1,86 +1,97 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js'
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'services.json');
+const supabaseUrl = process.env.SUPABASE_URL || ''
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-/**
- * GET /api/services         — return all services
- * POST /api/services        — create or update a service (by slug)
- * DELETE /api/services?slug=x — delete service by slug
- *
- * POST body: { slug, title, shortDescription, longDescription, icon, features[], category, featured, comingSoon? }
- */
 export default async function handler(req, res) {
   try {
-    let services = [];
-    try {
-      const raw = await fs.readFile(DATA_FILE, 'utf-8');
-      services = JSON.parse(raw);
-    } catch {
-      services = [];
-    }
-
     if (req.method === 'GET') {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json(services);
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .order('created_at', { ascending: true })
+      if (error) throw error
+      const services = (data || []).map(row => ({
+        slug: row.slug,
+        title: row.title,
+        shortDescription: row.shortDescription || '',
+        longDescription: row.longDescription || '',
+        icon: row.icon || 'Stethoscope',
+        features: row.features || [],
+        category: row.category,
+        featured: row.featured || false,
+        comingSoon: row.comingSoon || undefined,
+      }))
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json(services)
     }
 
     if (req.method === 'POST' || req.method === 'PUT') {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      const { title, slug, shortDescription, longDescription, icon, features, category, featured } = body;
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+      const { title, slug, shortDescription, longDescription, icon, features, category, featured, comingSoon } = body
 
       if (!title || !slug || !category) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Missing required fields: title, slug, category' });
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Missing required fields: title, slug, category' })
       }
 
-      const existingIndex = services.findIndex((s) => s.slug === slug);
+      const { data, error } = await supabase
+        .from('services')
+        .upsert({
+          slug,
+          title,
+          shortDescription: shortDescription || '',
+          longDescription: longDescription || '',
+          icon: icon || 'Stethoscope',
+          features: Array.isArray(features) ? features : [],
+          category,
+          featured: featured || false,
+          comingSoon: comingSoon || false,
+        })
+        .select()
+        .single()
 
-      const serviceData = {
-        slug,
-        title,
-        shortDescription: shortDescription || '',
-        longDescription: longDescription || '',
-        icon: icon || 'Stethoscope',
-        features: Array.isArray(features) ? features : [],
-        category,
-        featured: featured ?? false,
-        ...(body.comingSoon ? { comingSoon: true } : {}),
-      };
+      if (error) throw error
 
-      if (existingIndex >= 0) {
-        services[existingIndex] = { ...services[existingIndex], ...serviceData };
-      } else {
-        services.push(serviceData);
-      }
-
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-      await fs.writeFile(DATA_FILE, JSON.stringify(services, null, 2), 'utf-8');
-
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json(serviceData);
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({
+        slug: data.slug,
+        title: data.title,
+        shortDescription: data.shortDescription || '',
+        longDescription: data.longDescription || '',
+        icon: data.icon || 'Stethoscope',
+        features: data.features || [],
+        category: data.category,
+        featured: data.featured || false,
+        comingSoon: data.comingSoon || undefined,
+      })
     }
 
     if (req.method === 'DELETE') {
-      const slug = req.query.slug;
+      const slug = req.query.slug
       if (!slug) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: 'Missing slug query parameter' });
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(400).json({ error: 'Missing slug query parameter' })
       }
 
-      const filtered = services.filter((s) => s.slug !== slug);
-      await fs.writeFile(DATA_FILE, JSON.stringify(filtered, null, 2), 'utf-8');
+      const { error } = await supabase
+        .from('services')
+        .delete()
+        .eq('slug', slug)
 
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json({ success: true, slug });
+      if (error) throw error
+
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({ success: true, slug })
     }
 
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(405).json({ error: 'Method not allowed' })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[api/services] Error:', message);
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({ error: 'Internal server error', debug: message });
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('[api/services] Error:', message)
+    res.setHeader('Content-Type', 'application/json')
+    return res.status(500).json({ error: 'Internal server error', debug: message })
   }
 }

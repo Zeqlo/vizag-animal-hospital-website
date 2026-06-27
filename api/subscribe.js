@@ -1,80 +1,48 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.SUPABASE_URL || ''
+const supabaseKey = process.env.SUPABASE_ANON_KEY || ''
+const supabase = createClient(supabaseUrl, supabaseKey)
+
 /**
  * Serverless API endpoint: /api/subscribe
- *
- * Handles newsletter subscriptions.
- * - POST: { email } — adds email to data/subscribers.json (prevents duplicates)
- * - GET:  returns the list of subscribers
- *
- * Data is stored in a JSON file at data/subscribers.json.
+ * Handles newsletter subscriptions from the footer form.
+ * - POST: { email } — adds email to subscribers table (prevents duplicates)
  */
-
-import fs from "fs";
-import path from "path";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const SUBSCRIBERS_FILE = path.join(DATA_DIR, "subscribers.json");
-
-function ensureDataDir() {
-  try {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  } catch (e) {
-    // Directory may already exist — ignore EEXIST
-  }
-}
-
-function readSubscribers() {
-  ensureDataDir();
-  try {
-    const raw = fs.readFileSync(SUBSCRIBERS_FILE, "utf-8");
-    return JSON.parse(raw);
-  } catch (e) {
-    return [];
-  }
-}
-
-function writeSubscribers(list) {
-  ensureDataDir();
-  fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(list, null, 2), "utf-8");
-}
-
 export default async function handler(req, res) {
-  res.setHeader("Content-Type", "application/json");
+  res.setHeader('Content-Type', 'application/json')
 
   try {
-    if (req.method === "GET") {
-      const subscribers = readSubscribers();
-      return res.status(200).json(subscribers);
-    }
+    if (req.method === 'POST') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+      const { email } = body
 
-    if (req.method === "POST") {
-      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-      const { email } = body;
-
-      if (!email || !email.includes("@")) {
-        return res.status(400).json({ status: "error", message: "Valid email is required" });
+      if (!email || !email.includes('@')) {
+        return res.status(400).json({ status: 'error', message: 'Valid email is required' })
       }
 
-      const subscribers = readSubscribers();
+      // Upsert to avoid duplicates (email has unique constraint)
+      const { data, error } = await supabase
+        .from('subscribers')
+        .upsert({ email }, { onConflict: 'email' })
+        .select()
+        .single()
 
-      // Prevent duplicates
-      if (subscribers.some((s) => s.email === email)) {
-        return res.status(200).json({ status: "success", message: "Already subscribed" });
+      if (error) {
+        // If it's a duplicate, that's fine
+        if (error.code === '23505') {
+          return res.status(200).json({ status: 'success', message: 'Already subscribed' })
+        }
+        throw error
       }
 
-      subscribers.push({
-        email,
-        subscribedAt: new Date().toISOString(),
-      });
-
-      writeSubscribers(subscribers);
-
-      return res.status(200).json({ status: "success", message: "Subscribed successfully" });
+      return res.status(200).json({ status: 'success', message: 'Subscribed successfully' })
     }
 
-    return res.status(405).json({ status: "error", message: "Method not allowed" });
+    return res.status(405).json({ status: 'error', message: 'Method not allowed' })
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error occurred";
-    console.error("[subscribe] Error:", message);
-    return res.status(500).json({ status: "error", message });
+    const message = error instanceof Error ? error.message : 'Unknown error occurred'
+    console.error('[subscribe] Error:', message)
+    return res.status(500).json({ status: 'error', message })
   }
 }
