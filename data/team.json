@@ -1,0 +1,29 @@
+[
+  {
+    "id": "dr-mounika",
+    "name": "Dr. K. Mounika",
+    "qualifications": "BVSc. & AH, M.V.Sc",
+    "specialization": "Veterinarian",
+    "bio": "Dr. K. Mounika is a dedicated veterinarian committed to providing compassionate and comprehensive care for pets. With a strong foundation in veterinary science, she handles general consultations, vaccinations, and critical care management for both small and large animals.",
+    "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop",
+    "role": "veterinarian"
+  },
+  {
+    "id": "coming-soon-1",
+    "name": "Coming Soon",
+    "qualifications": "",
+    "specialization": "Support Staff",
+    "bio": "We are expanding our team. Stay tuned for updates as we welcome new members to the Vizag Animal Hospital family.",
+    "image": "",
+    "role": "support"
+  },
+  {
+    "id": "coming-soon-2",
+    "name": "Coming Soon",
+    "qualifications": "",
+    "specialization": "Support Staff",
+    "bio": "We are expanding our team. Stay tuned for updates as we welcome new members to the Vizag Animal Hospital family.",
+    "image": "",
+    "role": "support"
+  }
+]
