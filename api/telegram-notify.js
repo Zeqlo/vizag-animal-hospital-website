@@ -30,15 +30,18 @@ export default async function handler(req, res) {
     const { ownerName, phone, petName, petType, service, preferredDate, timeSlot, notes } = body;
 
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-    const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+    const TELEGRAM_CHAT_IDS = process.env.TELEGRAM_CHAT_ID; // comma-separated list
 
     // If Telegram is not configured, acknowledge gracefully without crashing
-    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_IDS) {
       return res.status(200).json({
         status: "ok",
         message: "Telegram not configured - booking received but no notification sent",
       });
     }
+
+    // Support multiple chat IDs (comma-separated)
+    const chatIds = TELEGRAM_CHAT_IDS.split(",").map((id) => id.trim()).filter(Boolean);
 
     const message = [
       "New Appointment Booking:",
@@ -54,39 +57,31 @@ export default async function handler(req, res) {
 
     const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
-    const telegramRes = await fetch(telegramUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-      }),
-    });
+    // Send to all chat IDs in parallel
+    const results = await Promise.allSettled(
+      chatIds.map((chatId) =>
+        fetch(telegramUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: chatId, text: message }),
+        }).then((res) => res.json()),
+      ),
+    );
 
-    if (!telegramRes.ok) {
-      const errorText = await telegramRes.text();
-      console.error("[telegram-notify] Telegram API error:", telegramRes.status, errorText);
+    const succeeded = results.filter((r) => r.status === "fulfilled" && r.value?.ok).length;
+    const failed = results.length - succeeded;
+
+    if (succeeded === 0) {
+      console.error("[telegram-notify] All Telegram sends failed:", results);
       return res.status(500).json({
         status: "error",
-        message: "Failed to send Telegram notification",
-        detail: errorText,
-      });
-    }
-
-    const telegramData = await telegramRes.json();
-
-    if (!telegramData.ok) {
-      console.error("[telegram-notify] Telegram API returned not ok:", telegramData);
-      return res.status(500).json({
-        status: "error",
-        message: "Telegram API returned an error",
-        detail: telegramData.description || "Unknown error",
+        message: "Failed to send Telegram notification to all recipients",
       });
     }
 
     return res.status(200).json({
       status: "success",
-      message: "Telegram notification sent",
+      message: `Telegram notification sent to ${succeeded}/${chatIds.length} recipients${failed > 0 ? ` (${failed} failed)` : ""}`,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error occurred";
