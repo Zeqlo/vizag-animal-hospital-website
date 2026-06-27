@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { Link, useParams } from 'react-router-dom'
@@ -7,13 +8,15 @@ import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { BlogCard } from '@/components/common/BlogCard'
-import { blogPosts } from '@/data/blogPosts'
+import { blogPosts as blogPostsStatic } from '@/data/blogPosts'
+import { useApiData } from '@/hooks/useApiData'
 
 // Extend the BlogPost type locally to support optional youtubeUrl
-type BlogPostWithYouTube = typeof blogPosts[number] & { youtubeUrl?: string }
+type BlogPostWithYouTube = typeof blogPostsStatic[number] & { youtubeUrl?: string }
 
 export default function BlogDetail() {
   const { slug } = useParams<{ slug: string }>()
+  const { data: blogPosts } = useApiData('/api/blog-posts', blogPostsStatic)
   const post = blogPosts.find((p) => p.slug === slug) as BlogPostWithYouTube | undefined
 
   if (!post) {

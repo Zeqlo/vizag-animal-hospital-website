@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select, Label, FieldError } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import { clinicInfo } from '@/data/clinicInfo'
-import { services } from '@/data/services'
+import { services as servicesStatic } from '@/data/services'
+import { useApiData } from '@/hooks/useApiData'
 
 const appointmentSchema = z.object({
   ownerName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -52,6 +53,7 @@ export default function BookAppointment() {
     resolver: zodResolver(appointmentSchema),
   })
 
+  const { data: services } = useApiData('/api/services', servicesStatic)
   const [isSuccess, setIsSuccess] = useState(false)
   const [submittedData, setSubmittedData] = useState<AppointmentFormData | null>(null)
 

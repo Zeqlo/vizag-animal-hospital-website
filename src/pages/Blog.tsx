@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { Bell, Newspaper } from 'lucide-react'
@@ -7,10 +7,17 @@ import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { BlogCard } from '@/components/common/BlogCard'
-import { blogPosts, blogCategories } from '@/data/blogPosts'
+import { blogPosts as blogPostsStatic } from '@/data/blogPosts'
+import { useApiData } from '@/hooks/useApiData'
 
 export default function Blog() {
+  const { data: blogPosts } = useApiData('/api/blog-posts', blogPostsStatic)
   const [selectedCategory, setSelectedCategory] = useState('All')
+
+  const blogCategories = useMemo(() => {
+    const unique = Array.from(new Set(blogPosts.map((p) => p.category)))
+    return ['All', ...unique]
+  }, [blogPosts])
 
   const filteredPosts =
     selectedCategory === 'All'

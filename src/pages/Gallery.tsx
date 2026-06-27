@@ -1,78 +1,21 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Helmet } from "react-helmet-async"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Camera, ImageIcon } from "lucide-react"
+import { X, Camera, ImageIcon, Loader2 } from "lucide-react"
 import { Dialog } from "@headlessui/react"
 import { Container } from "@/components/ui/Container"
 import { Section } from "@/components/ui/Section"
 import { SectionTitle } from "@/components/ui/SectionTitle"
 import { Badge } from "@/components/ui/Badge"
+import { useApiData } from "@/hooks/useApiData"
 
 interface GalleryItem {
   id: number
   title: string
   category: "Clinic Facilities" | "Happy Pets" | "Events" | "Grooming"
   image: string
+  youtubeUrl?: string
 }
-
-const galleryItems: GalleryItem[] = [
-  {
-    id: 1,
-    title: "Modern Treatment Room",
-    category: "Clinic Facilities",
-    image: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=600&h=400&fit=crop",
-  },
-  {
-    id: 2,
-    title: "State-of-the-Art Facility",
-    category: "Clinic Facilities",
-    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=400&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Happy Golden Retriever",
-    category: "Happy Pets",
-    image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&h=400&fit=crop",
-  },
-  {
-    id: 4,
-    title: "Smiling Pup Post-Checkup",
-    category: "Happy Pets",
-    image: "https://images.unsplash.com/photo-1583512603805-3cc40b814acc?w=600&h=400&fit=crop",
-  },
-  {
-    id: 5,
-    title: "Cute Cat Visitor",
-    category: "Happy Pets",
-    image: "https://images.unsplash.com/photo-1576201836106-db1758fd1c3e?w=600&h=400&fit=crop",
-  },
-  {
-    id: 6,
-    title: "Pet Adoption Drive",
-    category: "Events",
-    image: "https://images.unsplash.com/photo-1518791841217-8f162571bbb4?w=600&h=400&fit=crop",
-  },
-  {
-    id: 7,
-    title: "Community Pet Camp",
-    category: "Events",
-    image: "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&h=400&fit=crop",
-  },
-  {
-    id: 8,
-    title: "Spa Day Grooming",
-    category: "Grooming",
-    image: "https://images.unsplash.com/photo-1591946614720-90a587da4f36?w=600&h=400&fit=crop",
-  },
-  {
-    id: 9,
-    title: "Fresh Trim & Style",
-    category: "Grooming",
-    image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&h=400&fit=crop",
-  },
-]
-
-const categories = ["All", "Clinic Facilities", "Happy Pets", "Events", "Grooming"] as const
 
 // Varying heights for masonry effect
 const heightClasses = [
@@ -90,6 +33,13 @@ const heightClasses = [
 export default function Gallery() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All")
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+  const { data: galleryItems, loading } = useApiData<GalleryItem[]>("/api/gallery", [])
+
+  const categories = useMemo(() => {
+    const cats = new Set(galleryItems.map((item) => item.category))
+    return ["All", ...Array.from(cats)] as string[]
+  }, [galleryItems])
 
   const filteredItems =
     selectedCategory === "All"
@@ -172,6 +122,13 @@ export default function Gallery() {
           </div>
 
           {/* Masonry-style Grid */}
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-ocean-600" />
+            </div>
+          ) : filteredItems.length === 0 ? (
+            <p className="text-center text-slate-500 py-20">No gallery items yet.</p>
+          ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 auto-rows-[160px] sm:auto-rows-[180px] gap-3 sm:gap-4">
             {filteredItems.map((item, idx) => (
               <motion.div
@@ -205,6 +162,7 @@ export default function Gallery() {
               </motion.div>
             ))}
           </div>
+          )}
         </Container>
       </Section>
 

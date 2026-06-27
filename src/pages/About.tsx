@@ -23,8 +23,9 @@ import { Container } from "@/components/ui/Container"
 import { Section } from "@/components/ui/Section"
 import { SectionTitle } from "@/components/ui/SectionTitle"
 import { TeamMemberCard } from "@/components/common/TeamMemberCard"
-import { teamMembers } from "@/data/team"
+import { teamMembers as teamMembersStatic } from "@/data/team"
 import { clinicInfo } from "@/data/clinicInfo"
+import { useApiData } from "@/hooks/useApiData"
 
 const coreValues = [
   {
@@ -119,6 +120,7 @@ const itemFade = {
 }
 
 export default function About() {
+  const { data: teamMembers } = useApiData("/api/team", teamMembersStatic)
   const vets = teamMembers.filter((m) => m.role === "veterinarian").slice(0, 3)
 
   return (

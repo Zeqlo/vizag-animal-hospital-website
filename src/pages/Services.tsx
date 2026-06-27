@@ -13,10 +13,12 @@ import { Section } from "@/components/ui/Section"
 import { SectionTitle } from "@/components/ui/SectionTitle"
 import { Badge } from "@/components/ui/Badge"
 import { ServiceCard } from "@/components/common/ServiceCard"
-import { services } from "@/data/services"
+import { services as servicesStatic } from "@/data/services"
 import { clinicInfo } from "@/data/clinicInfo"
+import { useApiData } from "@/hooks/useApiData"
 
 export default function Services() {
+  const { data: services } = useApiData("/api/services", servicesStatic)
   return (
     <>
       <Helmet>
