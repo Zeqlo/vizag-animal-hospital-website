@@ -12,6 +12,8 @@ import {
   Stethoscope,
   Phone,
   MessageCircle,
+  Star,
+  ExternalLink,
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Container } from "@/components/ui/Container"
@@ -19,7 +21,6 @@ import { Section } from "@/components/ui/Section"
 import { SectionTitle } from "@/components/ui/SectionTitle"
 import { ServiceCard } from "@/components/common/ServiceCard"
 import { TestimonialCard } from "@/components/common/TestimonialCard"
-import { GoogleReviews } from "@/components/common/GoogleReviews"
 import { ProductCard } from "@/components/common/ProductCard"
 import { services as servicesStatic, type Service } from "@/data/services"
 import { testimonials } from "@/data/testimonials"
@@ -256,31 +257,53 @@ export default function Home() {
         </Container>
       </Section>
 
-      {/* Testimonials */}
+      {/* Google Reviews */}
       <Section bg="slate">
         <Container>
           <SectionTitle
-            eyebrow="Testimonials"
+            eyebrow="Google Reviews"
             title="What Pet Parents Say"
-            subtitle="Real stories from real clients who trust us with their furry family members."
+            subtitle="Rated 4.9 stars by 372 pet parents on Google. Here are a few of their stories."
           />
+          {/* Rating summary bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="h-5 w-5 text-amber-400 fill-amber-400" />
+                ))}
+              </div>
+              <span className="text-lg font-semibold text-slate-900">4.9</span>
+              <span className="text-sm text-slate-500">(372 Google reviews)</span>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {topTestimonials.map((testimonial, index) => (
               <TestimonialCard key={testimonial.id} testimonial={testimonial} index={index} />
             ))}
           </div>
-        </Container>
-      </Section>
-
-      {/* Google Reviews */}
-      <Section bg="slate">
-        <Container>
-          <SectionTitle
-            eyebrow="Reviews"
-            title="What People Say"
-            subtitle="See what clients are saying about Vizag Animal Hospital on Google."
-          />
-          <GoogleReviews />
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <span className="text-xs text-slate-400">Powered by</span>
+            <span className="text-sm font-medium text-slate-700">
+              <span className="font-semibold">
+                <span className="text-blue-500">G</span>
+                <span className="text-red-500">o</span>
+                <span className="text-amber-500">o</span>
+                <span className="text-blue-500">g</span>
+                <span className="text-green-500">l</span>
+                <span className="text-red-500">e</span>
+              </span>
+            </span>
+            <a
+              href="https://www.google.com/maps/place/Vizag+Animal+Hospital+%26+Store/@17.8035434,83.3616168,17z"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-ocean-600 hover:text-ocean-700 transition-colors"
+            >
+              View all reviews
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
         </Container>
       </Section>
 

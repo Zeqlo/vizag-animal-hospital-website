@@ -32,7 +32,7 @@ export function TestimonialCard({ testimonial, index = 0 }: TestimonialCardProps
       <div className="pt-4 border-t border-slate-100">
         <p className="font-semibold text-slate-900">{testimonial.ownerName}</p>
         <p className="text-xs text-slate-500">
-          {testimonial.petName} ({testimonial.petType}) • {formatDate(testimonial.date)}
+          {testimonial.petName ? `${testimonial.petName} (${testimonial.petType}) • ` : ""}{formatDate(testimonial.date)}
         </p>
         <p className="text-xs text-ocean-600 font-medium mt-1">{testimonial.service}</p>
       </div>
