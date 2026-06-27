@@ -155,16 +155,15 @@ export default async function handler(req, res) {
     }
 
     // Also notify clinic via Telegram
-    // Fire-and-forget: do not await or catch errors
     try {
-      const telegramNotifyUrl = `${req.headers["x-forwarded-proto"] || "https"}://${req.headers.host}/api/telegram-notify`;
-      fetch(telegramNotifyUrl, {
+      const telegramNotifyUrl = `${req.headers["x-forwarded-proto"] || "https"}}://${req.headers.host}/api/telegram-notify`;
+      await fetch(telegramNotifyUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ownerName, phone, petName, petType, service, preferredDate, timeSlot, notes }),
-      }).catch(() => {});
+      });
     } catch (_) {
-      // Ignore — fire-and-forget
+      // Ignore — Telegram notification is best-effort
     }
 
     // Get VetsonCloud auth (auto-login with cached token)
