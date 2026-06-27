@@ -54,5 +54,5 @@ export const clinicInfo: ClinicInfo = {
     instagram: "https://instagram.com/vizaganimalhospital",
   },
   mapEmbedUrl:
-    "https://maps.google.com/maps?q=D.No+3-72+HIG-120+Chandrampalem+Midhilapuri+VUDA+Colony+Madhurawada+Visakhapatnam+Andhra+Pradesh+530041&t=&z=15&ie=UTF8&iwloc=&output=embed",
+    "https://maps.google.com/maps?q=Vizag+Animal+Hospital+%26+Store&center=17.8035434,83.3616168&z=14&output=embed",
 }
