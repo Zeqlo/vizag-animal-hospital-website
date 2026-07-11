@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
-import { Dialog, DialogPanel } from "@headlessui/react"
+import { Dialog } from "@headlessui/react"
 import { Menu, X, Phone, MessageCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { clinicInfo } from "@/data/clinicInfo"
@@ -19,7 +19,6 @@ const navLinks = [
   { name: "Contact", path: "/contact" },
 ]
 
-// Build a wa.me link from the raw whatsapp string (strip everything except digits)
 const whatsappUrl = `https://wa.me/${clinicInfo.whatsapp.replace(/\D/g, "")}`
 
 export function Navbar() {
@@ -39,31 +38,29 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm">
-        {/* Announcement bar — always visible, desktop + mobile */}
+      <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm">
         <div className="bg-slate-900 text-white py-1.5 sm:py-1">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center sm:justify-end items-center gap-3 sm:gap-4">
             <a
               href={`tel:${clinicInfo.phone}`}
-              className="flex items-center gap-1 text-xs sm:text-sm whitespace-nowrap hover:text-coral-300 transition-colors"
+              className="flex items-center gap-1 text-xs sm:text-sm hover:text-coral-300 transition-colors min-w-0"
             >
               <Phone className="h-3.5 w-3.5 flex-shrink-0" />
-              <span className="whitespace-nowrap">{clinicInfo.phone}</span>
+              <span className="truncate">{clinicInfo.phone}</span>
             </a>
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs sm:text-sm whitespace-nowrap hover:text-green-300 transition-colors"
+              className="flex items-center gap-1 text-xs sm:text-sm hover:text-green-300 transition-colors min-w-0"
             >
               <MessageCircle className="h-3.5 w-3.5 text-green-400 flex-shrink-0" />
-              <span className="whitespace-nowrap hidden sm:inline">WhatsApp</span>
-              <span className="whitespace-nowrap sm:hidden">Chat</span>
+              <span className="hidden sm:inline truncate">WhatsApp</span>
+              <span className="sm:hidden truncate">Chat</span>
             </a>
           </div>
         </div>
 
-        {/* Main navbar — scrolls together with announcement bar */}
         <nav
           className={cn(
             "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between transition-all duration-300",
@@ -83,7 +80,7 @@ export function Navbar() {
                 Vizag Animal
               </span>
               <span className="block font-heading font-semibold text-[10px] sm:text-xs leading-none text-slate-500">
-                Hospital &amp; Store
+                Hospital & Store
               </span>
             </div>
           </Link>
@@ -122,11 +119,6 @@ export function Navbar() {
             </button>
           </div>
         </nav>
-
-        {/* Background for the navbar row when not scrolled — keeps text readable over hero */}
-        {!scrolled && (
-          <div className="absolute inset-0 -z-10 bg-transparent" aria-hidden="true" />
-        )}
       </header>
 
       <AnimatePresence>
@@ -172,7 +164,6 @@ export function Navbar() {
                 </div>
 
                 <div className="px-3 py-4 space-y-2">
-                  {/* Call Now button — large, full width, at top */}
                   <a
                     href={`tel:${clinicInfo.phone}`}
                     className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-coral-500 text-white text-base font-semibold hover:bg-coral-600 transition-colors w-full"
@@ -181,7 +172,6 @@ export function Navbar() {
                     Call Now
                   </a>
 
-                  {/* WhatsApp button — large, full width, green, at top */}
                   <a
                     href={whatsappUrl}
                     target="_blank"
@@ -192,7 +182,6 @@ export function Navbar() {
                     WhatsApp
                   </a>
 
-                  {/* Nav links */}
                   <div className="pt-2 space-y-1">
                     {navLinks.map((link) => (
                       <NavLink
@@ -210,7 +199,6 @@ export function Navbar() {
                     ))}
                   </div>
 
-                  {/* Book Appointment button */}
                   <Link
                     to="/book-appointment"
                     className="mt-3 flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-coral-500 text-white font-semibold hover:bg-coral-600 transition-colors w-full"

@@ -32,7 +32,7 @@ export function SectionTitle({
       )}
       <h2
         className={cn(
-          "text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-balance",
+          "text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-balance break-words",
           light ? "text-white" : "text-slate-900"
         )}
       >
@@ -43,7 +43,8 @@ export function SectionTitle({
           className={cn(
             "mt-4 text-base sm:text-lg max-w-2xl",
             center && "mx-auto",
-            light ? "text-ocean-100" : "text-slate-600"
+            light ? "text-ocean-100" : "text-slate-600",
+            "break-words"
           )}
         >
           {subtitle}

@@ -7,9 +7,14 @@
     scroll-behavior: smooth;
   }
 
+  html,
+  body,
+  #root {
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-slate-50 text-slate-800 font-sans antialiased;
-    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {

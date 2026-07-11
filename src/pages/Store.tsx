@@ -140,7 +140,7 @@ export default function Store() {
           </div>
 
           {/* Category filter buttons - horizontal scroll */}
-          <div className="flex gap-2 overflow-x-auto pb-3 mb-6 -mx-1 px-1 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-3 mb-6 -mx-4 px-4 scrollbar-hide sm:mx-0 sm:px-0">
             {productCategories.map((cat) => (
               <button
                 key={cat}
