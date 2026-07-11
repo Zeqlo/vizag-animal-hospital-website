@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
 import { Dialog, DialogPanel } from "@headlessui/react"
-import { Menu, X, PawPrint, Phone, MessageCircle } from "lucide-react"
+import { Menu, X, Phone, MessageCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { clinicInfo } from "@/data/clinicInfo"
 import { cn } from "@/lib/utils"
@@ -39,13 +39,13 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm">
         {/* Announcement bar — always visible, desktop + mobile */}
-        <div className="bg-slate-900 text-white py-1">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end items-center gap-4">
+        <div className="bg-slate-900 text-white py-1.5 sm:py-1">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center sm:justify-end items-center gap-3 sm:gap-4">
             <a
               href={`tel:${clinicInfo.phone}`}
-              className="flex items-center gap-1.5 text-sm whitespace-nowrap hover:text-coral-300 transition-colors"
+              className="flex items-center gap-1 text-xs sm:text-sm whitespace-nowrap hover:text-coral-300 transition-colors"
             >
               <Phone className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="whitespace-nowrap">{clinicInfo.phone}</span>
@@ -54,10 +54,11 @@ export function Navbar() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm whitespace-nowrap hover:text-green-300 transition-colors"
+              className="flex items-center gap-1 text-xs sm:text-sm whitespace-nowrap hover:text-green-300 transition-colors"
             >
               <MessageCircle className="h-3.5 w-3.5 text-green-400 flex-shrink-0" />
-              <span className="whitespace-nowrap">WhatsApp</span>
+              <span className="whitespace-nowrap hidden sm:inline">WhatsApp</span>
+              <span className="whitespace-nowrap sm:hidden">Chat</span>
             </a>
           </div>
         </div>
@@ -69,24 +70,19 @@ export function Navbar() {
             scrolled ? "py-2" : "py-3"
           )}
         >
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-              scrolled ? "bg-ocean-700" : "bg-white/20 backdrop-blur-md"
-            )}>
-              <PawPrint className={cn("h-6 w-6", scrolled ? "text-white" : "text-white")} />
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-colors overflow-hidden bg-white shadow-sm ring-1 ring-slate-200">
+              <img
+                src="/logo.png"
+                alt="Vizag Animal Hospital & Store logo"
+                className="w-full h-full object-contain p-0.5"
+              />
             </div>
             <div className="block">
-              <span className={cn(
-                "block font-heading font-semibold text-base sm:text-lg leading-none",
-                scrolled ? "text-slate-900" : "text-white"
-              )}>
+              <span className="block font-heading font-semibold text-base sm:text-lg leading-none text-slate-900">
                 Vizag Animal
               </span>
-              <span className={cn(
-                "block font-heading font-semibold text-[10px] sm:text-xs leading-none",
-                scrolled ? "text-slate-500" : "text-white/80"
-              )}>
+              <span className="block font-heading font-semibold text-[10px] sm:text-xs leading-none text-slate-500">
                 Hospital &amp; Store
               </span>
             </div>
@@ -99,13 +95,9 @@ export function Navbar() {
                 to={link.path}
                 className={({ isActive }) => cn(
                   "relative px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-                  scrolled
-                    ? isActive
-                      ? "text-ocean-700 bg-ocean-50"
-                      : "text-slate-700 hover:text-ocean-700 hover:bg-slate-50"
-                    : isActive
-                      ? "text-white bg-white/20"
-                      : "text-white/90 hover:text-white hover:bg-white/10"
+                  isActive
+                    ? "text-ocean-700 bg-ocean-50"
+                    : "text-slate-700 hover:text-ocean-700 hover:bg-slate-50"
                 )}
               >
                 {link.name}
@@ -123,10 +115,7 @@ export function Navbar() {
             </Link>
             <button
               onClick={() => setMobileOpen(true)}
-              className={cn(
-                "lg:hidden p-2 rounded-lg transition-colors",
-                scrolled ? "text-slate-700 hover:bg-slate-100" : "text-white hover:bg-white/10"
-              )}
+              className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
               aria-label="Open menu"
             >
               <Menu className="h-6 w-6" />
@@ -164,8 +153,12 @@ export function Navbar() {
               >
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
                   <div className="flex items-center gap-2">
-                    <div className="w-9 h-9 rounded-xl bg-ocean-700 flex items-center justify-center">
-                      <PawPrint className="h-5 w-5 text-white" />
+                    <div className="w-9 h-9 rounded-xl bg-white ring-1 ring-slate-200 flex items-center justify-center overflow-hidden">
+                      <img
+                        src="/logo.png"
+                        alt="Vizag Animal Hospital & Store logo"
+                        className="w-full h-full object-contain p-0.5"
+                      />
                     </div>
                     <span className="font-heading font-bold text-slate-900">Vizag Animal Hospital</span>
                   </div>
@@ -185,7 +178,7 @@ export function Navbar() {
                     className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-coral-500 text-white text-base font-semibold hover:bg-coral-600 transition-colors w-full"
                   >
                     <Phone className="h-5 w-5" />
-                    Call Now: {clinicInfo.phone}
+                    Call Now
                   </a>
 
                   {/* WhatsApp button — large, full width, green, at top */}

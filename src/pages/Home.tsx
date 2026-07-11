@@ -94,21 +94,22 @@ export default function Home() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
+      <section className="relative min-h-[620px] sm:min-h-[720px] lg:min-h-screen flex items-center bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 overflow-hidden">
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 opacity-30">
           <img
-            src="https://images.unsplash.com/photo-1576201836106-db1758fd1c3e?w=1200&h=800&fit=crop"
-            alt="Veterinarian caring for a pet"
+            src="https://images.unsplash.com/photo-1628009368231-7603352721c6?w=1600&h=900&fit=crop"
+            alt="Veterinarian caring for a happy dog at Vizag Animal Hospital"
             className="w-full h-full object-cover"
           />
         </div>
-        <Container className="relative z-10 py-24 sm:py-20">
+        <Container className="relative z-10 pt-28 sm:pt-32 pb-16 sm:pb-20">
           <div className="max-w-3xl">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-white text-xs sm:text-sm font-semibold mb-4 sm:mb-6"
+              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-white text-xs sm:text-sm font-semibold mb-4 sm:mb-6 shadow-sm"
             >
               <PawPrint className="h-4 w-4" />
               {clinicInfo.tagline}
@@ -118,7 +119,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white leading-tight"
+              className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white leading-tight drop-shadow-md"
             >
               {clinicInfo.name}
             </motion.h1>
@@ -127,7 +128,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-4 sm:mt-6 text-base sm:text-xl text-ocean-100 max-w-2xl"
+              className="mt-4 sm:mt-6 text-base sm:text-xl text-white/95 max-w-2xl drop-shadow-sm"
             >
               {clinicInfo.shortDescription}
             </motion.p>
@@ -162,7 +163,8 @@ export default function Home() {
               <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="w-full sm:w-auto">
                 <Button variant="primary" size="lg" className="w-full sm:w-auto">
                   <Phone className="h-5 w-5" />
-                  Call {clinicInfo.phone}
+                  <span className="sm:hidden">Call Now</span>
+                  <span className="hidden sm:inline">Call {clinicInfo.phone}</span>
                 </Button>
               </a>
               <a

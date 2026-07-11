@@ -32,7 +32,7 @@ export function SectionTitle({
       )}
       <h2
         className={cn(
-          "text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-balance",
+          "text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-balance",
           light ? "text-white" : "text-slate-900"
         )}
       >

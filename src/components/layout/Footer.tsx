@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { PawPrint, Facebook, Instagram, Phone, MapPin, Clock, Heart } from "lucide-react"
+import { Facebook, Instagram, Phone, MapPin, Clock, Heart } from "lucide-react"
 import { clinicInfo } from "@/data/clinicInfo"
 import { services as servicesStatic } from "@/data/services"
 import { useApiData } from "@/hooks/useApiData"
@@ -46,8 +46,12 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-ocean-700 flex items-center justify-center">
-                <PawPrint className="h-6 w-6 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-white ring-1 ring-slate-700 flex items-center justify-center overflow-hidden">
+                <img
+                  src="/logo.png"
+                  alt="Vizag Animal Hospital & Store logo"
+                  className="w-full h-full object-contain p-0.5"
+                />
               </div>
               <div>
                 <span className="block font-heading font-bold text-white text-lg leading-none">Vizag Animal</span>
