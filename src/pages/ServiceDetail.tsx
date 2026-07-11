@@ -24,7 +24,6 @@ import { SectionTitle } from "@/components/ui/SectionTitle"
 import { Badge } from "@/components/ui/Badge"
 import { ServiceCard } from "@/components/common/ServiceCard"
 import { services as servicesStatic, type Service } from "@/data/services"
-import { useApiData } from "@/hooks/useApiData"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Stethoscope,
@@ -85,7 +84,7 @@ const addOnServices = [
 
 export default function ServiceDetail() {
   const { slug } = useParams<{ slug: string }>()
-  const { data: services } = useApiData("/api/services", servicesStatic)
+  const services = servicesStatic
   const service = services.find((s) => s.slug === slug)
 
   if (!service) {

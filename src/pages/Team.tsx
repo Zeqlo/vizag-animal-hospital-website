@@ -4,7 +4,6 @@ import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { Users, Heart, Briefcase } from "lucide-react"
 import { teamMembers as teamMembersStatic } from "@/data/team"
-import { useApiData } from "@/hooks/useApiData"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
 import { Container } from "@/components/ui/Container"
@@ -14,7 +13,7 @@ import { Badge } from "@/components/ui/Badge"
 import { TeamMemberCard } from "@/components/common/TeamMemberCard"
 
 export default function Team() {
-  const { data: teamMembers } = useApiData("/api/team", teamMembersStatic)
+  const teamMembers = teamMembersStatic
   const veterinarians = teamMembers.filter((m) => m.role === "veterinarian")
   const supportStaff = teamMembers.filter((m) => m.role === "support")
 

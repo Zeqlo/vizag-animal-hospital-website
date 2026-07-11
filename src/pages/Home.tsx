@@ -26,7 +26,6 @@ import { services as servicesStatic, type Service } from "@/data/services"
 import { testimonials } from "@/data/testimonials"
 import { clinicInfo } from "@/data/clinicInfo"
 import { products } from "@/data/products"
-import { useApiData } from "@/hooks/useApiData"
 
 const whyChooseUs = [
   {
@@ -78,7 +77,7 @@ const itemFade = {
 const whatsappNumber = "919014176278"
 
 export default function Home() {
-  const { data: services } = useApiData("/api/services", servicesStatic)
+  const services = servicesStatic
   const featuredProducts = products.slice(0, 4)
   const topTestimonials = testimonials.slice(0, 3)
   const topServices = services.filter((s) => s.featured).slice(0, 5)

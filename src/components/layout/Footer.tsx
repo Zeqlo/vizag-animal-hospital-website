@@ -3,10 +3,9 @@ import { Link } from "react-router-dom"
 import { Facebook, Instagram, Phone, MapPin, Clock, Heart } from "lucide-react"
 import { clinicInfo } from "@/data/clinicInfo"
 import { services as servicesStatic } from "@/data/services"
-import { useApiData } from "@/hooks/useApiData"
 
 export function Footer() {
-  const { data: services } = useApiData("/api/services", servicesStatic)
+  const services = servicesStatic
   const [newsletterEmail, setNewsletterEmail] = useState("")
   const [subscribed, setSubscribed] = useState(false)
 
