@@ -96,9 +96,9 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-12 sm:py-16 lg:py-20">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-10 sm:py-16 lg:py-20">
             {/* Text content */}
-            <div className="order-1 lg:order-1">
+            <div className="order-2 lg:order-1">
               <div className="sm:bg-white/95 sm:backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
                 <motion.span
                   initial={{ opacity: 0, y: 20 }}
@@ -128,11 +128,12 @@ export default function Home() {
                   {clinicInfo.shortDescription}
                 </motion.p>
 
+                {/* Desktop CTAs */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
-                  className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
+                  className="hidden sm:flex mt-6 sm:mt-8 flex-col sm:flex-row gap-3 sm:gap-4"
                 >
                   <Link to="/book-appointment" className="w-full sm:w-auto">
                     <Button variant="accent" size="lg" className="w-full sm:w-auto">
@@ -177,6 +178,45 @@ export default function Home() {
                   </a>
                 </motion.div>
 
+                {/* Mobile CTAs */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="flex sm:hidden mt-6 flex-col gap-3"
+                >
+                  <Link to="/book-appointment" className="w-full">
+                    <Button variant="accent" size="lg" className="w-full shadow-lg">
+                      <Calendar className="h-5 w-5" />
+                      Book Appointment
+                    </Button>
+                  </Link>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="w-full">
+                      <Button variant="primary" size="lg" className="w-full">
+                        <Phone className="h-5 w-5" />
+                        Call Now
+                      </Button>
+                    </a>
+                    <a
+                      href={`https://wa.me/${whatsappNumber}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full"
+                    >
+                      <Button
+                        variant="outline-white"
+                        size="lg"
+                        className="w-full !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
+                      >
+                        <MessageCircle className="h-5 w-5 !text-green-600 hover:!text-white" />
+                        WhatsApp
+                      </Button>
+                    </a>
+                  </div>
+                </motion.div>
+
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -212,17 +252,17 @@ export default function Home() {
             </div>
 
             {/* Mobile collage */}
-            <div className="order-2 lg:hidden pt-4">
+            <div className="order-1 lg:hidden">
               <div className="flex gap-3 items-end justify-center">
                 <img
                   src="/dog-hero.jpg"
                   alt="Happy beagle dog"
-                  className="w-[48%] h-52 object-cover rounded-3xl shadow-xl border-4 border-white"
+                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
                 />
                 <img
                   src="/cat-hero.jpg"
                   alt="Friendly cat"
-                  className="w-[48%] h-52 object-cover rounded-3xl shadow-xl border-4 border-white"
+                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
                 />
               </div>
             </div>
