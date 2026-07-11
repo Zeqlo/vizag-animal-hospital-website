@@ -13,7 +13,6 @@ import {
   Phone,
   MessageCircle,
   Star,
-  ExternalLink,
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Container } from "@/components/ui/Container"
@@ -355,15 +354,6 @@ export default function Home() {
                 <span className="text-red-500">e</span>
               </span>
             </span>
-            <a
-              href="https://www.google.com/maps/place/Vizag+Animal+Hospital+%26+Store/@17.8035434,83.3616168,17z"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-ocean-600 hover:text-ocean-700 transition-colors"
-            >
-              View all reviews
-              <ExternalLink className="h-3 w-3" />
-            </a>
           </div>
         </Container>
       </Section>

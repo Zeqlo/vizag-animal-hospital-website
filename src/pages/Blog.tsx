@@ -1,17 +1,27 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
-import { Bell, Newspaper } from 'lucide-react'
+import { Bell, Loader2, Newspaper } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { BlogCard } from '@/components/common/BlogCard'
-import { blogPosts as blogPostsStatic } from '@/data/blogPosts'
 import { useApiData } from '@/hooks/useApiData'
 
+interface BlogPost {
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  category: string
+  readTime: string
+  image: string
+  youtubeUrl?: string
+}
+
 export default function Blog() {
-  const { data: blogPosts } = useApiData('/api/blog-posts', blogPostsStatic)
+  const { data: blogPosts, loading } = useApiData<BlogPost[]>('/api/blog-posts', [])
   const [selectedCategory, setSelectedCategory] = useState('All')
 
   const blogCategories = useMemo(() => {
@@ -76,27 +86,29 @@ export default function Blog() {
           </div>
 
           {/* Blog Grid */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedCategory}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              {filteredPosts.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-ocean-600" />
+            </div>
+          ) : filteredPosts.length === 0 ? (
+            <p className="text-center text-slate-500 py-20">No blog posts yet.</p>
+          ) : (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedCategory}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   {filteredPosts.map((post, index) => (
                     <BlogCard key={post.slug} post={post} index={index} />
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-20">
-                  <p className="text-lg text-slate-500">No articles found in this category yet.</p>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </Container>
       </Section>
 
