@@ -117,7 +117,7 @@ export default function Grooming() {
       </Helmet>
 
       {/* Page Header */}
-      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-20 sm:py-28 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-28 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-72 h-72 bg-coral-400 rounded-full blur-3xl" />
           <div className="absolute bottom-10 left-10 w-96 h-96 bg-ocean-400 rounded-full blur-3xl" />
@@ -132,10 +132,10 @@ export default function Grooming() {
             <Badge variant="coral" className="mb-4 bg-white/15 text-white">
               <Scissors className="h-3 w-3" /> Pamper Your Pet
             </Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading text-white mb-5 text-balance">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white mb-5 text-balance">
               Grooming &amp; Spa Services
             </h1>
-            <p className="text-lg sm:text-xl text-ocean-100 leading-relaxed">
+            <p className="text-base sm:text-xl text-ocean-100 leading-relaxed">
               Professional grooming, nail care, and skin care management to keep
               your pet looking and feeling their best. Gentle, stress-free, and
               tailored to your pet's needs.
@@ -203,8 +203,40 @@ export default function Grooming() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5 }}
           >
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[640px]">
+            {/* Mobile: card layout */}
+            <div className="sm:hidden space-y-4">
+              {groomingPackages.map((pkg, idx) => (
+                <div
+                  key={idx}
+                  className={`rounded-xl border border-slate-200 p-4 ${pkg.highlight ? "bg-coral-50/40 border-coral-200" : ""}`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`inline-flex items-center justify-center w-9 h-9 rounded-lg flex-shrink-0 ${pkg.highlight ? "bg-coral-100 text-coral-600" : "bg-ocean-50 text-ocean-700"}`}>
+                      <pkg.icon className="h-4 w-4" />
+                    </div>
+                    <p className="text-sm font-semibold text-slate-900">{pkg.name}</p>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-slate-50 rounded-lg py-2">
+                      <p className="text-[10px] text-slate-500 uppercase">Small</p>
+                      <p className="text-sm font-bold text-slate-900">Rs {pkg.small}</p>
+                    </div>
+                    <div className="bg-slate-50 rounded-lg py-2">
+                      <p className="text-[10px] text-slate-500 uppercase">Medium</p>
+                      <p className="text-sm font-bold text-slate-900">Rs {pkg.medium}</p>
+                    </div>
+                    <div className="bg-slate-50 rounded-lg py-2">
+                      <p className="text-[10px] text-slate-500 uppercase">Large</p>
+                      <p className="text-sm font-bold text-slate-900">Rs {pkg.large}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: table layout */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b-2 border-slate-200">
                     <th className="py-4 px-4 text-sm font-bold font-heading text-slate-900">
@@ -311,7 +343,7 @@ export default function Grooming() {
               <span className="inline-block text-sm font-semibold uppercase tracking-wider text-coral-500 mb-3">
                 Why It Matters
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold font-heading text-slate-900 mb-4">
+              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-slate-900 mb-4">
                 Grooming Is Essential for Your Pet's Health
               </h2>
               <p className="text-slate-600 mb-4">
@@ -358,7 +390,7 @@ export default function Grooming() {
       </Section>
 
       {/* CTA: Book an Appointment */}
-      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-20">
+      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-20">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -367,25 +399,27 @@ export default function Grooming() {
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-white mb-4">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-white mb-4">
               Book a Grooming Appointment
             </h2>
-            <p className="text-lg text-ocean-100 max-w-2xl mx-auto mb-8">
+            <p className="text-base sm:text-lg text-ocean-100 max-w-2xl mx-auto mb-8">
               Give your pet the pampering they deserve. Schedule a grooming
               session with our experienced team today.
             </p>
-            <Link to="/book-appointment">
-              <Button variant="accent" size="lg">
-                <Calendar className="h-5 w-5" />
-                Book an Appointment
-              </Button>
-            </Link>
-            <Link to="/services" className="inline-block mt-4 ml-4">
-              <Button variant="outline-white" size="lg">
-                View All Services
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
+            <div className="flex flex-col items-center gap-4">
+              <Link to="/book-appointment" className="w-full sm:w-auto">
+                <Button variant="accent" size="lg" className="w-full sm:w-auto">
+                  <Calendar className="h-5 w-5" />
+                  Book an Appointment
+                </Button>
+              </Link>
+              <Link to="/services" className="w-full sm:w-auto">
+                <Button variant="outline-white" size="lg" className="w-full sm:w-auto">
+                  View All Services
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </Container>
       </section>

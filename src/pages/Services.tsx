@@ -30,7 +30,7 @@ export default function Services() {
       </Helmet>
 
       {/* Page Header */}
-      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-20 sm:py-28">
+      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-28">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -41,10 +41,10 @@ export default function Services() {
             <Badge variant="coral" className="mb-4 bg-white/15 text-white">
               What We Offer
             </Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading text-white">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white">
               Our Veterinary Services
             </h1>
-            <p className="mt-4 text-lg text-ocean-100 max-w-2xl mx-auto">
+            <p className="mt-4 text-base sm:text-lg text-ocean-100 max-w-2xl mx-auto">
               Comprehensive, compassionate care for every stage of your pet's life — from routine
               checkups to advanced surgery and everything in between.
             </p>
@@ -81,7 +81,7 @@ export default function Services() {
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-ocean-700 text-white mb-5">
                 <HelpCircle className="h-7 w-7" />
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold font-heading text-slate-900 mb-4">
+              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-slate-900 mb-4">
                 Need Help Choosing?
               </h2>
               <p className="text-slate-600 max-w-2xl mx-auto mb-8">

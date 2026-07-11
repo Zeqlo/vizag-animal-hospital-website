@@ -139,7 +139,7 @@ export default function ServiceDetail() {
       </Helmet>
 
       {/* Page Header */}
-      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-20">
+      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-14 sm:py-20">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -148,14 +148,14 @@ export default function ServiceDetail() {
           >
             <Link
               to="/services"
-              className="inline-flex items-center gap-2 text-ocean-100 hover:text-white transition-colors mb-6 text-sm font-medium"
+              className="inline-flex items-center gap-2 text-ocean-100 hover:text-white transition-colors mb-4 sm:mb-6 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
               All Services
             </Link>
-            <div className="flex flex-col sm:flex-row items-start gap-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-sm text-white flex-shrink-0">
-                <Icon className="h-8 w-8" />
+            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+              <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm text-white flex-shrink-0">
+                <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-3">
@@ -169,10 +169,10 @@ export default function ServiceDetail() {
                     <Badge variant="coral">Coming Soon</Badge>
                   )}
                 </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-white">
+                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-white">
                   {service.title}
                 </h1>
-                <p className="mt-3 text-lg text-ocean-100 max-w-2xl">
+                <p className="mt-2 sm:mt-3 text-base sm:text-lg text-ocean-100 max-w-2xl">
                   {service.shortDescription}
                 </p>
               </div>
@@ -238,8 +238,41 @@ export default function ServiceDetail() {
                     <p className="text-sm text-slate-600 mb-6">
                       Package prices vary by breed size. All prices in Indian Rupees (Rs).
                     </p>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse min-w-[480px]">
+
+                    {/* Mobile: card layout */}
+                    <div className="sm:hidden space-y-3">
+                      {groomingPackages.map((pkg, idx) => (
+                        <div
+                          key={idx}
+                          className={`rounded-xl border border-slate-200 p-3 ${pkg.highlight ? "bg-coral-50/40 border-coral-200" : ""}`}
+                        >
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className={`inline-flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0 ${pkg.highlight ? "bg-coral-100 text-coral-600" : "bg-ocean-50 text-ocean-700"}`}>
+                              <pkg.icon className="h-4 w-4" />
+                            </div>
+                            <p className="text-sm font-semibold text-slate-900">{pkg.name}</p>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2 text-center">
+                            <div className="bg-slate-50 rounded-lg py-2">
+                              <p className="text-[10px] text-slate-500 uppercase">Small</p>
+                              <p className="text-sm font-bold text-slate-900">Rs {pkg.small}</p>
+                            </div>
+                            <div className="bg-slate-50 rounded-lg py-2">
+                              <p className="text-[10px] text-slate-500 uppercase">Medium</p>
+                              <p className="text-sm font-bold text-slate-900">Rs {pkg.medium}</p>
+                            </div>
+                            <div className="bg-slate-50 rounded-lg py-2">
+                              <p className="text-[10px] text-slate-500 uppercase">Large</p>
+                              <p className="text-sm font-bold text-slate-900">Rs {pkg.large}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop: table layout */}
+                    <div className="hidden sm:block overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
                         <thead>
                           <tr className="border-b-2 border-slate-200">
                             <th className="py-3 px-3 text-sm font-bold font-heading text-slate-900">
@@ -266,9 +299,7 @@ export default function ServiceDetail() {
                             >
                               <td className="py-3 px-3">
                                 <div className="flex items-center gap-2">
-                                  <div className={`inline-flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0 ${
-                                    pkg.highlight ? "bg-coral-100 text-coral-600" : "bg-ocean-50 text-ocean-700"
-                                  }`}>
+                                  <div className={`inline-flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0 ${pkg.highlight ? "bg-coral-100 text-coral-600" : "bg-ocean-50 text-ocean-700"}`}>
                                     <pkg.icon className="h-4 w-4" />
                                   </div>
                                   <div>

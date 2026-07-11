@@ -128,7 +128,7 @@ export default function About() {
       </Helmet>
 
       {/* Page Header */}
-      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-20 sm:py-28">
+      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-28">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -136,10 +136,10 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading text-white">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white">
               About Us
             </h1>
-            <p className="mt-4 text-lg text-ocean-100 max-w-2xl mx-auto">
+            <p className="mt-4 text-base sm:text-lg text-ocean-100 max-w-2xl mx-auto">
               {clinicInfo.shortDescription}
             </p>
           </motion.div>
@@ -291,12 +291,12 @@ export default function About() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="flex flex-wrap justify-center gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {facilities.map((facility, index) => {
               const Icon = facility.icon
               return (
-                <motion.div key={index} variants={itemFade} className="w-full sm:w-80">
+                <motion.div key={index} variants={itemFade}>
                   <Card hover className="p-6 h-full text-center">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-ocean-50 text-ocean-700 mb-4">
                       <Icon className="h-6 w-6" />
@@ -331,11 +331,11 @@ export default function About() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="w-full sm:w-80"
               >
-                <Card hover className="p-8 text-center h-full">
+                <Card hover className="p-6 sm:p-8 text-center h-full">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-ocean-100 to-coral-100 text-ocean-700 mb-5">
                     <BadgeCheck className="h-8 w-8" />
                   </div>
-                  <h3 className="text-2xl font-bold font-heading text-slate-900 mb-1">
+                  <h3 className="text-xl sm:text-2xl font-bold font-heading text-slate-900 mb-1">
                     {cert.title}
                   </h3>
                   <p className="text-sm font-semibold text-ocean-700 mb-3">{cert.subtitle}</p>

@@ -9,6 +9,7 @@
 
   body {
     @apply bg-slate-50 text-slate-800 font-sans antialiased;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -50,7 +51,7 @@
   }
 
   .section-padding {
-    @apply py-16 sm:py-20 lg:py-24;
+    @apply py-12 sm:py-16 lg:py-20;
   }
 
   .container-custom {

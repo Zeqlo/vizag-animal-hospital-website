@@ -66,7 +66,7 @@ export default function Contact() {
       </Helmet>
 
       {/* Page Header */}
-      <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-16 sm:py-20">
+      <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-14 sm:py-20">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -74,14 +74,14 @@ export default function Contact() {
             transition={{ duration: 0.5 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium text-coral-200 mb-4">
+            <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 text-sm font-medium text-coral-200 mb-4">
               <MessageCircle className="h-4 w-4" />
               Get in Touch
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading mb-4">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading mb-4">
               Contact Us
             </h1>
-            <p className="text-base sm:text-lg text-ocean-100">
+            <p className="text-sm sm:text-lg text-ocean-100">
               Have a question or need to schedule a visit? We'd love to hear from you.
             </p>
           </motion.div>
@@ -98,7 +98,7 @@ export default function Contact() {
             className="mx-auto max-w-3xl text-center"
           >
             <div className="rounded-3xl bg-gradient-to-br from-ocean-50 via-white to-coral-50 border-2 border-ocean-100 p-8 sm:p-10 shadow-sm">
-              <h2 className="text-3xl sm:text-4xl font-bold font-heading text-slate-900 mb-6">
+              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-slate-900 mb-6">
                 Call or WhatsApp Us
               </h2>
 

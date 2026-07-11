@@ -102,13 +102,13 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         </div>
-        <Container className="relative z-10 py-20">
+        <Container className="relative z-10 py-24 sm:py-20">
           <div className="max-w-3xl">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm font-semibold mb-6"
+              className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-white text-xs sm:text-sm font-semibold mb-4 sm:mb-6"
             >
               <PawPrint className="h-4 w-4" />
               {clinicInfo.tagline}
@@ -118,7 +118,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading text-white leading-tight"
+              className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white leading-tight"
             >
               {clinicInfo.name}
             </motion.h1>
@@ -127,7 +127,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-6 text-lg sm:text-xl text-ocean-100 max-w-2xl"
+              className="mt-4 sm:mt-6 text-base sm:text-xl text-ocean-100 max-w-2xl"
             >
               {clinicInfo.shortDescription}
             </motion.p>
@@ -136,16 +136,16 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-8 flex flex-col sm:flex-row gap-4"
+              className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
-              <Link to="/book-appointment">
-                <Button variant="accent" size="lg">
+              <Link to="/book-appointment" className="w-full sm:w-auto">
+                <Button variant="accent" size="lg" className="w-full sm:w-auto">
                   <Calendar className="h-5 w-5" />
                   Book Appointment
                 </Button>
               </Link>
-              <Link to="/services">
-                <Button variant="outline-white" size="lg">
+              <Link to="/services" className="w-full sm:w-auto">
+                <Button variant="outline-white" size="lg" className="w-full sm:w-auto">
                   Explore Services
                   <ArrowRight className="h-5 w-5" />
                 </Button>
@@ -157,9 +157,9 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-4 flex flex-col sm:flex-row gap-4"
+              className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
-              <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`}>
+              <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="w-full sm:w-auto">
                 <Button variant="primary" size="lg" className="w-full sm:w-auto">
                   <Phone className="h-5 w-5" />
                   Call {clinicInfo.phone}
@@ -169,6 +169,7 @@ export default function Home() {
                 href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="w-full sm:w-auto"
               >
                 <Button
                   variant="outline-white"
@@ -185,11 +186,11 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-12 flex flex-wrap items-center gap-6 text-white/90"
+              className="mt-8 sm:mt-12 flex flex-wrap items-center gap-4 sm:gap-6 text-white/90"
             >
               <div className="flex items-center gap-2">
                 <PawPrint className="h-5 w-5" />
-                <span className="text-sm font-medium">Pet Store Onsite</span>
+                <span className="text-xs sm:text-sm font-medium">Pet Store Onsite</span>
               </div>
             </motion.div>
           </div>
@@ -315,9 +316,9 @@ export default function Home() {
             title="Shop Quality Pet Products"
             subtitle="Premium pet food, accessories, toys, and supplements — all available at our in-house pet store."
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {featuredProducts.map((product, index) => (
+          <ProductCard key={product.id} product={product} index={index} />
             ))}
           </div>
           <div className="text-center mt-10">
@@ -332,7 +333,7 @@ export default function Home() {
       </Section>
 
       {/* CTA Section */}
-      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-20">
+      <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-20">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -341,13 +342,13 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-white mb-4">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-white mb-4">
               Book Your Pet's Appointment Today
             </h2>
-            <p className="text-lg text-ocean-100 max-w-2xl mx-auto mb-8">
+            <p className="text-base sm:text-lg text-ocean-100 max-w-2xl mx-auto mb-8">
               Give your furry friend the care they deserve. Schedule a visit with our expert veterinary team.
             </p>
-            <Link to="/book-appointment">
+            <Link to="/book-appointment" className="inline-block">
               <Button variant="accent" size="lg">
                 <Calendar className="h-5 w-5" />
                 Book Appointment

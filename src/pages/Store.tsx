@@ -91,7 +91,7 @@ export default function Store() {
       </Helmet>
 
       {/* Page Header */}
-      <section className="relative bg-gradient-to-br from-ocean-900 to-ocean-700 py-20 sm:py-28 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-ocean-900 to-ocean-700 py-16 sm:py-28 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-coral-400 rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-ocean-400 rounded-full blur-3xl" />
@@ -106,10 +106,10 @@ export default function Store() {
             <Badge variant="coral" className="mb-4">
               <ShoppingBag className="h-3 w-3" /> Pet Store
             </Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading text-white mb-5 text-balance">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white mb-5 text-balance">
               Pet Store
             </h1>
-            <p className="text-lg sm:text-xl text-ocean-100 leading-relaxed">
+            <p className="text-base sm:text-xl text-ocean-100 leading-relaxed">
               Quality products for your beloved pets — premium food, fun toys,
               essential medicines, grooming supplies, and more. All available at
               our Vizag store.

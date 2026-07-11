@@ -93,7 +93,7 @@ export default function BookAppointment() {
       </Helmet>
 
       {/* Page Header */}
-      <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-16 sm:py-20">
+      <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-14 sm:py-20">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -101,14 +101,14 @@ export default function BookAppointment() {
             transition={{ duration: 0.5 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium text-coral-200 mb-4">
+            <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 text-sm font-medium text-coral-200 mb-4">
               <PawPrint className="h-4 w-4" />
               We're here for your pets
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading mb-4">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading mb-4">
               Book an Appointment
             </h1>
-            <p className="text-base sm:text-lg text-ocean-100">
+            <p className="text-sm sm:text-lg text-ocean-100">
               Schedule a visit for your furry friend in just a few clicks. Our team will confirm your appointment within 2 hours.
             </p>
           </motion.div>
@@ -117,9 +117,9 @@ export default function BookAppointment() {
 
       <Section bg="slate">
         <Container>
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 order-2 lg:order-1">
               <AnimatePresence mode="wait">
                 {isSuccess && submittedData ? (
                   <motion.div
@@ -209,7 +209,7 @@ export default function BookAppointment() {
                     {/* Call / WhatsApp CTA */}
                     <Card className="p-6 sm:p-8 mb-6 bg-gradient-to-br from-ocean-50 to-coral-50 border-ocean-200">
                       <div className="text-center">
-                        <h2 className="text-2xl sm:text-3xl font-bold font-heading text-slate-900 mb-2">
+                        <h2 className="text-xl sm:text-3xl font-bold font-heading text-slate-900 mb-2">
                           Prefer to call or WhatsApp? Most of our clients do.
                         </h2>
                         <p className="text-slate-600 mb-6">
@@ -364,7 +364,7 @@ export default function BookAppointment() {
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-6 order-1 lg:order-2">
               {/* Clinic Hours */}
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-4">

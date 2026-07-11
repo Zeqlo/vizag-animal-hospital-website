@@ -15,7 +15,7 @@ const bgClasses = {
 
 export function Section({ className, bg = "white", children, ...props }: SectionProps) {
   return (
-    <section className={cn("py-16 sm:py-20 lg:py-24", bgClasses[bg], className)} {...props}>
+    <section className={cn("py-12 sm:py-16 lg:py-20", bgClasses[bg], className)} {...props}>
       {children}
     </section>
   )
