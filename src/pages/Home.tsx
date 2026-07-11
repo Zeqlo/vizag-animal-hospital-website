@@ -96,7 +96,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-10 sm:py-16 lg:py-20 pb-24 sm:pb-16 lg:pb-20">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-10 sm:py-16 lg:py-20 pb-28 sm:pb-16 lg:pb-20">
             {/* Text content */}
             <div className="order-2 lg:order-1">
               <div className="sm:bg-white/95 sm:backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
@@ -204,7 +204,7 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
-                  className="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-6 text-slate-500"
+                  className="mt-6 sm:mt-8 mb-4 sm:mb-0 flex flex-wrap items-center gap-3 sm:gap-6 text-slate-500"
                 >
                   <div className="flex items-center gap-1.5">
                     <PawPrint className="h-4 w-4 text-coral-500" />
