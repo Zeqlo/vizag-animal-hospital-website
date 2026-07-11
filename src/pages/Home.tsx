@@ -95,17 +95,28 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative min-h-[520px] sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden">
-        {/* Full animal photo background */}
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1600&h=900&fit=crop"
-            alt="Happy beagle at Vizag Animal Hospital"
-            className="w-full h-full object-cover object-center"
-          />
+        {/* Dog + Cat split background */}
+        <div className="absolute inset-0 flex flex-col sm:flex-row">
+          <div className="relative w-full h-1/2 sm:w-1/2 sm:h-full overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=900&h=900&fit=crop"
+              alt="Happy beagle dog at Vizag Animal Hospital"
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-slate-900/40"></div>
+          </div>
+          <div className="relative w-full h-1/2 sm:w-1/2 sm:h-full overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=900&h=900&fit=crop"
+              alt="Friendly cat at Vizag Animal Hospital"
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-slate-900/40"></div>
+          </div>
         </div>
 
-        {/* Dark overlay: heavier on the left where the text is */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/70 to-slate-800/30"></div>
+        {/* Centered dark overlay so text reads cleanly over both photos */}
+        <div className="absolute inset-0 bg-slate-950/60 sm:bg-gradient-to-r sm:from-slate-950/80 sm:via-slate-900/60 sm:to-slate-950/80"></div>
 
         <Container className="relative z-10 py-12 sm:py-16 lg:py-20">
           <div className="max-w-2xl">
