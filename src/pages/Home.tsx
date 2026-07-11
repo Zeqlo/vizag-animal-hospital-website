@@ -152,13 +152,12 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
-                  className="mt-3 sm:mt-4 flex flex-row gap-3"
+                  className="hidden sm:flex mt-3 sm:mt-4 flex-row gap-3"
                 >
                   <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="flex-1 sm:flex-none">
                     <Button variant="primary" size="md" className="w-full">
                       <Phone className="h-4 w-4" />
-                      <span className="sm:hidden">Call Now</span>
-                      <span className="hidden sm:inline">Call {clinicInfo.phone}</span>
+                      Call {clinicInfo.phone}
                     </Button>
                   </a>
                   <a
@@ -173,8 +172,7 @@ export default function Home() {
                       className="w-full !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
                     >
                       <MessageCircle className="h-4 w-4 !text-green-600 hover:!text-white" />
-                      <span className="sm:hidden">WhatsApp</span>
-                      <span className="hidden sm:inline">WhatsApp Us</span>
+                      WhatsApp Us
                     </Button>
                   </a>
                 </motion.div>
@@ -183,11 +181,15 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
-                  className="mt-8 sm:mt-12 flex flex-wrap items-center gap-4 sm:gap-6 text-slate-600"
+                  className="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-6 text-slate-500"
                 >
-                  <div className="flex items-center gap-2">
-                    <PawPrint className="h-5 w-5 text-coral-500" />
-                    <span className="text-xs sm:text-sm font-medium">Pet Store Onsite</span>
+                  <div className="flex items-center gap-1.5">
+                    <PawPrint className="h-4 w-4 text-coral-500" />
+                    <span className="text-xs font-medium">Pet Store Onsite</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                    <span className="text-xs font-medium">4.9 Google Rating</span>
                   </div>
                 </motion.div>
               </div>
@@ -210,17 +212,17 @@ export default function Home() {
             </div>
 
             {/* Mobile collage */}
-            <div className="order-2 lg:hidden">
+            <div className="order-2 lg:hidden pt-4">
               <div className="flex gap-3 items-end justify-center">
                 <img
                   src="/dog-hero.jpg"
                   alt="Happy beagle dog"
-                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
+                  className="w-[48%] h-52 object-cover rounded-3xl shadow-xl border-4 border-white"
                 />
                 <img
                   src="/cat-hero.jpg"
                   alt="Friendly cat"
-                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
+                  className="w-[48%] h-52 object-cover rounded-3xl shadow-xl border-4 border-white"
                 />
               </div>
             </div>
