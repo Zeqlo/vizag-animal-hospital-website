@@ -152,11 +152,11 @@ export default function Home() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
-                  className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4"
+                  className="mt-3 sm:mt-4 flex flex-row gap-3"
                 >
-                  <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="w-full sm:w-auto">
-                    <Button variant="primary" size="lg" className="w-full sm:w-auto">
-                      <Phone className="h-5 w-5" />
+                  <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="flex-1 sm:flex-none">
+                    <Button variant="primary" size="md" className="w-full">
+                      <Phone className="h-4 w-4" />
                       <span className="sm:hidden">Call Now</span>
                       <span className="hidden sm:inline">Call {clinicInfo.phone}</span>
                     </Button>
@@ -165,15 +165,16 @@ export default function Home() {
                     href={`https://wa.me/${whatsappNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto"
+                    className="flex-1 sm:flex-none"
                   >
                     <Button
                       variant="outline-white"
-                      size="lg"
-                      className="w-full sm:w-auto !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
+                      size="md"
+                      className="w-full !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
                     >
-                      <MessageCircle className="h-5 w-5 !text-green-600 hover:!text-white" />
-                      WhatsApp Us
+                      <MessageCircle className="h-4 w-4 !text-green-600 hover:!text-white" />
+                      <span className="sm:hidden">WhatsApp</span>
+                      <span className="hidden sm:inline">WhatsApp Us</span>
                     </Button>
                   </a>
                 </motion.div>
@@ -210,16 +211,16 @@ export default function Home() {
 
             {/* Mobile collage */}
             <div className="order-2 lg:hidden">
-              <div className="relative w-full aspect-[4/3] max-w-md mx-auto">
+              <div className="flex gap-3 items-end justify-center">
                 <img
                   src="/dog-hero.jpg"
                   alt="Happy beagle dog"
-                  className="absolute top-0 left-0 w-[58%] h-[75%] object-cover rounded-3xl shadow-2xl border-4 border-white"
+                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
                 />
                 <img
                   src="/cat-hero.jpg"
                   alt="Friendly cat"
-                  className="absolute bottom-0 right-0 w-[55%] h-[70%] object-cover rounded-3xl shadow-2xl border-4 border-white"
+                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
                 />
               </div>
             </div>
