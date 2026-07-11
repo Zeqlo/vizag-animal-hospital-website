@@ -58,7 +58,7 @@ export const teamMembers: TeamMember[] = [
     id: "madhavi",
     name: "Madhavi",
     qualifications: "Veterinary Polytechnic",
-    specialization: "Veterinary Assistant & Front Desk",
+    specialization: "Veterinary Assistant",
     bio: "Madhavi is the friendly face that greets you and your pet at Vizag Animal Hospital. She manages appointments, assists the veterinarians during consultations, and ensures every visit runs smoothly.",
     image: "/team/placeholder.svg",
     role: "support",
