@@ -52,7 +52,7 @@ export function Navbar() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs sm:text-sm hover:text-green-300 transition-colors min-w-0 bg-green-500/20 hover:bg-green-500/30 px-2 py-1 rounded-lg"
+              className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm hover:text-green-300 transition-colors min-w-0 bg-green-500/20 hover:bg-green-500/30 px-2 py-1 rounded-lg"
             >
               <MessageCircle className="h-3.5 w-3.5 text-green-400 flex-shrink-0" />
               <span className="truncate font-medium">WhatsApp</span>
