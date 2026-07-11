@@ -94,7 +94,7 @@ export default function Home() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative min-h-[520px] sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden">
+      <section className="relative min-h-[600px] sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden bg-slate-100">
         {/* Dog + Cat split background */}
         <div className="absolute inset-0 flex flex-col sm:flex-row">
           <div className="relative w-full h-1/2 sm:w-1/2 sm:h-full overflow-hidden">
@@ -103,7 +103,7 @@ export default function Home() {
               alt="Happy beagle dog at Vizag Animal Hospital"
               className="w-full h-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-slate-900/40"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent sm:from-black/30 sm:to-transparent"></div>
           </div>
           <div className="relative w-full h-1/2 sm:w-1/2 sm:h-full overflow-hidden">
             <img
@@ -111,20 +111,17 @@ export default function Home() {
               alt="Friendly cat at Vizag Animal Hospital"
               className="w-full h-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-slate-900/40"></div>
+            <div className="absolute inset-0 bg-gradient-to-l from-black/20 to-transparent sm:from-black/30 sm:to-transparent"></div>
           </div>
         </div>
 
-        {/* Centered dark overlay so text reads cleanly over both photos */}
-        <div className="absolute inset-0 bg-slate-950/60 sm:bg-gradient-to-r sm:from-slate-950/80 sm:via-slate-900/60 sm:to-slate-950/80"></div>
-
         <Container className="relative z-10 py-12 sm:py-16 lg:py-20">
-          <div className="max-w-2xl">
+          <div className="max-w-xl sm:bg-white/90 sm:backdrop-blur-md sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-coral-500/90 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold mb-4 sm:mb-6 shadow-sm"
+              className="inline-flex items-center gap-2 bg-coral-500 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold mb-4 sm:mb-6 shadow-sm"
             >
               <PawPrint className="h-4 w-4" />
               {clinicInfo.tagline}
@@ -134,7 +131,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white leading-[1.1] drop-shadow-lg break-words"
+              className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white sm:text-slate-900 leading-[1.1] drop-shadow-sm sm:drop-shadow-none break-words"
             >
               {clinicInfo.name}
             </motion.h1>
@@ -143,7 +140,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-4 sm:mt-6 text-base sm:text-xl text-white/95 max-w-xl drop-shadow-md break-words"
+              className="mt-4 sm:mt-6 text-base sm:text-xl text-white/95 sm:text-slate-600 max-w-xl drop-shadow-sm sm:drop-shadow-none break-words"
             >
               {clinicInfo.shortDescription}
             </motion.p>
