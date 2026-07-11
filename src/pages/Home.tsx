@@ -98,14 +98,14 @@ export default function Home() {
         {/* Full animal photo background */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1628009368231-7603352721c6?w=1600&h=900&fit=crop"
-            alt="Veterinarian caring for a happy dog at Vizag Animal Hospital"
-            className="w-full h-full object-cover"
+            src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1600&h=900&fit=crop"
+            alt="Happy beagle at Vizag Animal Hospital"
+            className="w-full h-full object-cover object-center"
           />
         </div>
 
-        {/* Dark gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/60 to-slate-900/30"></div>
+        {/* Dark overlay: heavier on the left where the text is */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/70 to-slate-800/30"></div>
 
         <Container className="relative z-10 py-12 sm:py-16 lg:py-20">
           <div className="max-w-2xl">
