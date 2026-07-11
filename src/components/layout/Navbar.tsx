@@ -105,10 +105,10 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             <Link
               to="/book-appointment"
-              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-coral-500 text-white text-xs sm:text-sm font-semibold hover:bg-coral-600 transition-all active:scale-95 shadow-md hover:shadow-lg"
+              className="hidden sm:inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-coral-500 text-white text-xs sm:text-sm font-semibold hover:bg-coral-600 transition-all active:scale-95 shadow-md hover:shadow-lg"
             >
               Book
-              <span className="hidden sm:inline">Appointment</span>
+              <span className="hidden md:inline">Appointment</span>
             </Link>
             <button
               onClick={() => setMobileOpen(true)}
