@@ -39,8 +39,8 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm">
-        <div className="bg-slate-900 text-white py-1.5 sm:py-1">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between sm:justify-end items-center gap-3 sm:gap-4">
+        <div className="hidden sm:block bg-slate-900 text-white py-1">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end items-center gap-3 sm:gap-4">
             <a
               href={`tel:${clinicInfo.phone}`}
               className="flex items-center gap-1.5 text-xs sm:text-sm hover:text-coral-300 transition-colors min-w-0 bg-white/10 hover:bg-white/15 px-2 py-1 rounded-lg"
@@ -52,7 +52,7 @@ export function Navbar() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-1.5 text-xs sm:text-sm hover:text-green-300 transition-colors min-w-0 bg-green-500/20 hover:bg-green-500/30 px-2 py-1 rounded-lg"
+              className="flex items-center gap-1.5 text-xs sm:text-sm hover:text-green-300 transition-colors min-w-0 bg-green-500/20 hover:bg-green-500/30 px-2 py-1 rounded-lg"
             >
               <MessageCircle className="h-3.5 w-3.5 text-green-400 flex-shrink-0" />
               <span className="truncate font-medium">WhatsApp</span>
