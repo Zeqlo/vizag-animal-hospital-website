@@ -10,10 +10,12 @@ export function MobileBottomBar() {
       <div className="grid grid-cols-3 gap-2">
         <a
           href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`}
-          className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-ocean-50 text-ocean-700 active:bg-ocean-100 transition-colors"
+          className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl active:bg-slate-100 transition-colors"
         >
-          <Phone className="h-5 w-5" />
-          <span className="text-[11px] font-semibold">Call</span>
+          <div className="w-10 h-10 rounded-full bg-ocean-50 flex items-center justify-center text-ocean-700">
+            <Phone className="h-5 w-5" />
+          </div>
+          <span className="text-[11px] font-semibold text-slate-700">Call</span>
         </a>
 
         <Link
@@ -28,10 +30,12 @@ export function MobileBottomBar() {
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-green-50 text-green-700 active:bg-green-100 transition-colors"
+          className="flex flex-col items-center justify-center gap-1 py-2 rounded-xl active:bg-slate-100 transition-colors"
         >
-          <MessageCircle className="h-5 w-5" />
-          <span className="text-[11px] font-semibold">WhatsApp</span>
+          <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-700">
+            <MessageCircle className="h-5 w-5" />
+          </div>
+          <span className="text-[11px] font-semibold text-slate-700">WhatsApp</span>
         </a>
       </div>
     </div>

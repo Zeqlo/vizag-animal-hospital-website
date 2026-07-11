@@ -96,7 +96,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-10 sm:py-16 lg:py-20 pb-28 sm:pb-16 lg:pb-20">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-10 sm:py-16 lg:py-20 pb-36 sm:pb-16 lg:pb-20">
             {/* Text content */}
             <div className="order-2 lg:order-1">
               <div className="sm:bg-white/95 sm:backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
@@ -237,7 +237,7 @@ export default function Home() {
             {/* Mobile collage */}
             <div className="order-1 lg:hidden">
               <div className="relative">
-                <div className="absolute inset-x-0 -top-4 bottom-8 bg-gradient-to-tr from-coral-100 via-ocean-50 to-green-50 rounded-[2.5rem] -rotate-3 scale-105 -z-10 opacity-80" />
+                <div className="absolute inset-x-0 -top-6 bottom-6 bg-gradient-to-tr from-coral-200 via-ocean-100 to-green-100 rounded-[2.5rem] -rotate-2 scale-105 -z-10" />
                 <div className="flex gap-3 items-end justify-center">
                   <img
                     src="/dog-hero.jpg"
