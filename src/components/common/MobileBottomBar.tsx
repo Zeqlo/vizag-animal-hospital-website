@@ -6,7 +6,7 @@ const whatsappUrl = `https://wa.me/${clinicInfo.whatsapp.replace(/\D/g, "")}`
 
 export function MobileBottomBar() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] px-4 py-2 sm:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_24px_rgba(0,0,0,0.08)] px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:hidden">
       <div className="flex items-center justify-between">
         <a
           href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`}

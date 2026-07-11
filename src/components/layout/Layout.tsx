@@ -14,7 +14,7 @@ export function Layout({ children }: LayoutProps) {
     <>
       <ScrollToTop />
       <Navbar />
-      <main className="min-h-screen pb-[80px] sm:pb-0">
+      <main className="min-h-screen pb-[92px] sm:pb-0">
         {children}
       </main>
       <Footer />

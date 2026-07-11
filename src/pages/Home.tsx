@@ -96,7 +96,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-10 sm:py-16 lg:py-20">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-10 sm:py-16 lg:py-20 pb-24 sm:pb-16 lg:pb-20">
             {/* Text content */}
             <div className="order-2 lg:order-1">
               <div className="sm:bg-white/95 sm:backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
@@ -188,7 +188,7 @@ export default function Home() {
                   <Link to="/book-appointment" className="w-full">
                     <Button variant="accent" size="lg" className="w-full shadow-lg">
                       <Calendar className="h-5 w-5" />
-                      Book Appointment
+                      Book Now
                     </Button>
                   </Link>
 
