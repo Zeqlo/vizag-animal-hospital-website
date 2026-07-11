@@ -193,9 +193,9 @@ export default function Home() {
                 <Button
                   variant="outline-white"
                   size="lg"
-                  className="w-full sm:w-auto !border-green-500 !text-green-50 hover:!bg-green-500 hover:!text-white"
+                  className="w-full sm:w-auto !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
                 >
-                  <MessageCircle className="h-5 w-5" />
+                  <MessageCircle className="h-5 w-5 !text-green-600 hover:!text-white" />
                   WhatsApp Us
                 </Button>
               </a>
