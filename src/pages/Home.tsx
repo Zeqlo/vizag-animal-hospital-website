@@ -94,29 +94,35 @@ export default function Home() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative min-h-[600px] sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden bg-slate-100">
-        {/* Dog + Cat split background */}
-        <div className="absolute inset-0 flex flex-col sm:flex-row">
-          <div className="relative w-full h-1/2 sm:w-1/2 sm:h-full overflow-hidden">
+      <section className="relative min-h-[600px] sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden bg-slate-50">
+        {/* Right-side animal collage on desktop */}
+        <div className="hidden sm:flex absolute inset-y-0 right-0 w-1/2 lg:w-[55%] items-center justify-center p-6 lg:p-12">
+          <div className="relative w-full max-w-2xl aspect-[4/3]">
             <img
-              src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=900&h=900&fit=crop"
-              alt="Happy beagle dog at Vizag Animal Hospital"
-              className="w-full h-full object-cover object-center"
+              src="/dog-hero.jpg"
+              alt="Happy beagle dog"
+              className="absolute top-0 left-0 w-[58%] h-[75%] object-cover rounded-3xl shadow-2xl border-4 border-white"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent sm:from-black/30 sm:to-transparent"></div>
-          </div>
-          <div className="relative w-full h-1/2 sm:w-1/2 sm:h-full overflow-hidden">
             <img
-              src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=900&h=900&fit=crop"
-              alt="Friendly cat at Vizag Animal Hospital"
-              className="w-full h-full object-cover object-center"
+              src="/cat-hero.jpg"
+              alt="Friendly cat"
+              className="absolute bottom-0 right-0 w-[55%] h-[70%] object-cover rounded-3xl shadow-2xl border-4 border-white"
             />
-            <div className="absolute inset-0 bg-gradient-to-l from-black/20 to-transparent sm:from-black/30 sm:to-transparent"></div>
           </div>
         </div>
 
-        <Container className="relative z-10 py-12 sm:py-16 lg:py-20">
-          <div className="max-w-xl sm:bg-white/90 sm:backdrop-blur-md sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
+        {/* Mobile background: single bright animal photo */}
+        <div className="absolute inset-0 sm:hidden">
+          <img
+            src="/dog-hero.jpg"
+            alt="Happy beagle dog"
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-slate-900/20"></div>
+        </div>
+
+        <Container className="relative z-10 py-12 sm:py-16 lg:py-20 w-full">
+          <div className="max-w-xl sm:bg-white/95 sm:backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
