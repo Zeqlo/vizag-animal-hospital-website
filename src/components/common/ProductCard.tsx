@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { Star, ShoppingBag } from "lucide-react"
+import { ShoppingBag } from "lucide-react"
 import type { Product } from "@/data/products"
 import { Badge } from "@/components/ui/Badge"
 
@@ -24,22 +24,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
-        {product.inStock && (
-          <div className="absolute top-2 right-2">
-            <Badge variant="slate" className="bg-green-100 text-green-700 border-green-200">
-              In Stock
-            </Badge>
-          </div>
-        )}
       </div>
       <div className="p-4">
         <Badge variant="slate" className="mb-2">{product.category}</Badge>
         <h3 className="font-semibold text-slate-900 text-sm leading-snug mb-1 line-clamp-2">{product.name}</h3>
         <p className="text-xs text-slate-500 mb-2 line-clamp-2">{product.description}</p>
-        <div className="flex items-center gap-1 mb-3">
-          <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-          <span className="text-xs text-slate-600">{product.rating}</span>
-        </div>
         <div className="flex items-center justify-between">
           <div>
             <span className="text-lg font-bold text-slate-900">₹{product.price}</span>

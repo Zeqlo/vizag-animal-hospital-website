@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { Helmet } from "react-helmet-async"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
-import { MapPin, Scissors, ShoppingBag, Star, Search, ChevronLeft, ChevronRight } from "lucide-react"
-import { products, productCategories, type Product } from "@/data/products"
+import { MapPin, Scissors, ShoppingBag, Star, Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
+import { productCategories, type Product } from "@/data/products"
 import { clinicInfo } from "@/data/clinicInfo"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
@@ -19,9 +19,32 @@ export default function Store() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All")
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  const fetchProducts = useCallback(async (): Promise<void> => {
+    setLoading(true)
+    setError("")
+    try {
+      const res = await fetch("/api/products")
+      if (!res.ok) throw new Error("Failed to load products")
+      const data = await res.json()
+      setAllProducts(data.items || [])
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Unknown error"
+      setError(msg)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void fetchProducts()
+  }, [fetchProducts])
 
   const filteredProducts = useMemo(() => {
-    let result = products
+    let result = allProducts
 
     if (selectedCategory !== "All") {
       result = result.filter((p: Product) => p.category === selectedCategory)
@@ -38,7 +61,7 @@ export default function Store() {
     }
 
     return result
-  }, [selectedCategory, searchQuery])
+  }, [allProducts, selectedCategory, searchQuery])
 
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE)
   const paginatedProducts = filteredProducts.slice(
@@ -135,11 +158,21 @@ export default function Store() {
 
           {/* Results count */}
           <p className="text-sm text-slate-500 mb-4">
-            Showing {paginatedProducts.length} of {filteredProducts.length} products
+            {loading
+              ? "Loading products..."
+              : error
+                ? `Error: ${error}`
+                : `Showing ${paginatedProducts.length} of ${filteredProducts.length} products`}
           </p>
 
           {/* Product grid */}
-          {paginatedProducts.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-ocean-600" />
+            </div>
+          ) : error ? (
+            <p className="text-center text-red-500 py-12">{error}</p>
+          ) : paginatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {paginatedProducts.map((product, idx) => (
                 <ProductCard key={product.id} product={product} index={idx} />

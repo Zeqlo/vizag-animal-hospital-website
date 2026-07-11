@@ -14,21 +14,9 @@ interface GalleryItem {
   title: string
   category: "Clinic Facilities" | "Happy Pets" | "Events" | "Grooming"
   image: string
-  youtubeUrl?: string
 }
 
-// Varying heights for masonry effect
-const heightClasses = [
-  "row-span-2",
-  "row-span-1",
-  "row-span-2",
-  "row-span-1",
-  "row-span-2",
-  "row-span-1",
-  "row-span-2",
-  "row-span-1",
-  "row-span-2",
-]
+// Varying heights for masonry effect — removed, using uniform grid now
 
 export default function Gallery() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All")
@@ -129,7 +117,7 @@ export default function Gallery() {
           ) : filteredItems.length === 0 ? (
             <p className="text-center text-slate-500 py-20">No gallery items yet.</p>
           ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 auto-rows-[160px] sm:auto-rows-[180px] gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {filteredItems.map((item, idx) => (
               <motion.div
                 key={item.id}
@@ -137,13 +125,13 @@ export default function Gallery() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className={`relative overflow-hidden rounded-xl cursor-pointer group ${heightClasses[idx % heightClasses.length]}`}
+                className="relative overflow-hidden rounded-xl cursor-pointer group aspect-square bg-slate-100"
                 onClick={() => setLightboxIndex(idx)}
               >
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                 />
                 {/* Always-visible gradient on mobile, hover on desktop */}

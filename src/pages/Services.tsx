@@ -25,7 +25,7 @@ export default function Services() {
         <title>Veterinary Services | Vizag Animal Hospital</title>
         <meta
           name="description"
-          content="Explore the full range of veterinary services at Vizag Animal Hospital: vaccinations, critical care, all types of surgeries, grooming & spa, nail & skin care, in-house radiology & blood tests, doorstep services, and more."
+          content="Explore the full range of veterinary services at Vizag Animal Hospital: vaccinations, critical care, all types of surgeries, grooming & spa, nail & skin care, radiology & blood tests, doorstep services, and more."
         />
       </Helmet>
 

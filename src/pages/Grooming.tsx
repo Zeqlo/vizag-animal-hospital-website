@@ -8,6 +8,7 @@ import {
   Calendar,
   CheckCircle,
   ArrowRight,
+  IndianRupee,
 } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Card } from "@/components/ui/Card"
@@ -55,6 +56,40 @@ const groomingServices = [
       "Medicated baths for skin conditions",
     ],
   },
+]
+
+const groomingPackages = [
+  {
+    name: "Hair Cut",
+    icon: Scissors,
+    small: 1100,
+    medium: 1300,
+    large: 1600,
+    highlight: false,
+  },
+  {
+    name: "Bathing",
+    icon: Sparkles,
+    small: 500,
+    medium: 600,
+    large: 900,
+    highlight: false,
+  },
+  {
+    name: "Hair Cut + Bathing (Combo)",
+    icon: PawPrint,
+    small: 1600,
+    medium: 1900,
+    large: 2500,
+    highlight: false,
+  },
+]
+
+const addOnServices = [
+  { name: "Nail Cut", icon: PawPrint, price: 200 },
+  { name: "Nail Cut + Trimming", icon: Scissors, price: 300 },
+  { name: "Ear Cleaning", icon: Sparkles, price: 200 },
+  { name: "Infection Ear Cleaning", icon: Sparkles, price: 300 },
 ]
 
 const containerStagger = {
@@ -148,6 +183,117 @@ export default function Grooming() {
                 </motion.div>
               )
             })}
+          </motion.div>
+        </Container>
+      </Section>
+
+      {/* Grooming Pricing */}
+      <Section bg="white">
+        <Container>
+          <SectionTitle
+            eyebrow="Grooming Pricing"
+            title="Service Packages & Pricing"
+            subtitle="Transparent pricing for all grooming services. Package prices vary by breed size — small, medium, or large. All prices in Indian Rupees (Rs)."
+          />
+
+          {/* Package Pricing Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[640px]">
+                <thead>
+                  <tr className="border-b-2 border-slate-200">
+                    <th className="py-4 px-4 text-sm font-bold font-heading text-slate-900">
+                      Package
+                    </th>
+                    <th className="py-4 px-4 text-center text-sm font-bold font-heading text-ocean-700">
+                      Small Breed
+                    </th>
+                    <th className="py-4 px-4 text-center text-sm font-bold font-heading text-ocean-700">
+                      Medium Breed
+                    </th>
+                    <th className="py-4 px-4 text-center text-sm font-bold font-heading text-ocean-700">
+                      Large Breed
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {groomingPackages.map((pkg, idx) => (
+                    <tr
+                      key={idx}
+                      className={`border-b border-slate-100 transition-colors hover:bg-ocean-50/50 ${
+                        pkg.highlight ? "bg-coral-50/40" : ""
+                      }`}
+                    >
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg flex-shrink-0 ${
+                            pkg.highlight ? "bg-coral-100 text-coral-600" : "bg-ocean-50 text-ocean-700"
+                          }`}>
+                            <pkg.icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900">{pkg.name}</p>
+                            {pkg.highlight && (
+                              <span className="text-xs font-medium text-coral-600">Best Value</span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className="text-sm font-bold text-slate-900">Rs {pkg.small}</span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className="text-sm font-bold text-slate-900">Rs {pkg.medium}</span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className="text-sm font-bold text-slate-900">Rs {pkg.large}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-slate-500 mt-4">
+              * Prices may vary based on coat condition, matting, and specific breed requirements.
+            </p>
+          </motion.div>
+
+          {/* Add-On Services */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="mt-12"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-coral-50 text-coral-500">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <h3 className="text-2xl font-bold font-heading text-slate-900">Add-On Services</h3>
+            </div>
+            <p className="text-sm text-slate-600 mb-6">
+              Optional add-ons available with any grooming package. Flat rate for all breed sizes.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {addOnServices.map((addon, idx) => (
+                <Card key={idx} hover className="p-5 text-center">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-ocean-50 text-ocean-700 mb-3">
+                    <addon.icon className="h-5 w-5" />
+                  </div>
+                  <h4 className="text-sm font-semibold text-slate-900 mb-2">{addon.name}</h4>
+                  <div className="flex items-center justify-center gap-1">
+                    <IndianRupee className="h-4 w-4 text-coral-500" />
+                    <span className="text-xl font-bold text-slate-900">{addon.price}</span>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </motion.div>
         </Container>
       </Section>

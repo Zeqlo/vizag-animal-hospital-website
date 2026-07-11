@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
@@ -16,6 +16,7 @@ import {
   Loader2,
   Users,
   Stethoscope,
+  ShoppingBag,
 } from 'lucide-react'
 
 // TODO: Replace with proper auth later
@@ -33,7 +34,6 @@ interface GalleryItem {
   title: string
   category: GalleryCategory
   image: string
-  youtubeUrl?: string
 }
 
 interface BlogPost {
@@ -73,6 +73,15 @@ interface Service {
   category: 'veterinary' | 'grooming' | 'boarding'
   featured: boolean
   comingSoon?: boolean
+}
+
+interface Product {
+  id: number
+  name: string
+  category: string
+  price: number
+  image: string
+  description: string
 }
 
 /* ============================================================
@@ -115,7 +124,7 @@ export default function Admin() {
   const [authed, setAuthed] = useState<boolean>(false)
   const [password, setPassword] = useState<string>('')
   const [authError, setAuthError] = useState<string>('')
-  const [activeTab, setActiveTab] = useState<'gallery' | 'blog' | 'subscribers' | 'team' | 'services'>('gallery')
+  const [activeTab, setActiveTab] = useState<'gallery' | 'blog' | 'subscribers' | 'team' | 'services' | 'store'>('gallery')
 
   // Restore auth from localStorage on mount
   useEffect(() => {
@@ -213,6 +222,7 @@ export default function Admin() {
     { key: 'blog', label: 'Blog Manager', icon: FileText },
     { key: 'team', label: 'Team Manager', icon: Users },
     { key: 'services', label: 'Services Manager', icon: Stethoscope },
+    { key: 'store', label: 'Store Manager', icon: ShoppingBag },
     { key: 'subscribers', label: 'Subscribers', icon: Mail },
   ]
 
@@ -228,7 +238,7 @@ export default function Admin() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-              <p className="text-sm text-slate-500">Manage gallery, blog posts, team, services, and subscribers.</p>
+              <p className="text-sm text-slate-500">Manage gallery, blog posts, team, services, store products, and subscribers.</p>
             </div>
             <button onClick={handleLogout} className={btnGhost}>
               <LogOut className="h-4 w-4" />
@@ -259,6 +269,7 @@ export default function Admin() {
           {activeTab === 'blog' && <BlogManager />}
           {activeTab === 'team' && <TeamManager />}
           {activeTab === 'services' && <ServicesManager />}
+          {activeTab === 'store' && <StoreManager />}
           {activeTab === 'subscribers' && <SubscriberManager />}
         </Container>
       </Section>
@@ -279,7 +290,6 @@ function GalleryManager(): JSX.Element {
   const [title, setTitle] = useState<string>('')
   const [category, setCategory] = useState<GalleryCategory>('Happy Pets')
   const [image, setImage] = useState<string>('')
-  const [youtubeUrl, setYoutubeUrl] = useState<string>('')
   const [saving, setSaving] = useState<boolean>(false)
   const [formMsg, setFormMsg] = useState<string>('')
 
@@ -325,7 +335,7 @@ function GalleryManager(): JSX.Element {
       const res = await fetch(`${API_BASE}/gallery`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, category, image, youtubeUrl: youtubeUrl || undefined }),
+        body: JSON.stringify({ title, category, image }),
       })
       if (!res.ok) throw new Error('Failed to add gallery item')
       const newItem: GalleryItem = await res.json()
@@ -333,7 +343,6 @@ function GalleryManager(): JSX.Element {
       setTitle('')
       setCategory('Happy Pets')
       setImage('')
-      setYoutubeUrl('')
       setFormMsg('Gallery item added successfully!')
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
@@ -386,10 +395,6 @@ function GalleryManager(): JSX.Element {
               <p className="text-xs text-green-600 mt-1">File selected (base64). Will be used as image.</p>
             )}
           </div>
-          <div className="sm:col-span-2">
-            <label className={labelClass}>YouTube URL (optional)</label>
-            <input value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." className={inputClass} />
-          </div>
           <div className="sm:col-span-2 flex items-center gap-4">
             <button type="submit" className={btnPrimary} disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
@@ -420,12 +425,11 @@ function GalleryManager(): JSX.Element {
             {items.map((item) => (
               <div key={item.id} className="relative group rounded-lg overflow-hidden border border-slate-200">
                 <div className="aspect-[4/3] bg-slate-100">
-                  <img src={item.image} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={item.image} alt={item.title} className="w-full h-full object-contain" loading="lazy" />
                 </div>
                 <div className="p-2">
                   <p className="text-xs font-semibold text-slate-900 truncate">{item.title}</p>
                   <p className="text-[10px] text-slate-500">{item.category}</p>
-                  {item.youtubeUrl && <p className="text-[10px] text-red-500">▶ YouTube</p>}
                 </div>
                 <button
                   onClick={() => void handleDelete(item.id)}
@@ -920,6 +924,16 @@ function TeamManager(): JSX.Element {
     setFormMsg('')
   }
 
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      setImage(typeof reader.result === 'string' ? reader.result : '')
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleEdit = (member: TeamMember): void => {
     setEditingId(member.id)
     setName(member.name)
@@ -1032,7 +1046,12 @@ function TeamManager(): JSX.Element {
           </div>
           <div className="sm:col-span-2">
             <label className={labelClass}>Image URL</label>
-            <input value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://..." className={inputClass} />
+            <input value={image.startsWith('data:') ? '' : image} onChange={(e) => setImage(e.target.value)} placeholder="https://..." className={inputClass} />
+            <p className="text-xs text-slate-400 mt-1">Or upload a file below.</p>
+            <input type="file" accept="image/*" onChange={handleFile} className="mt-2 text-sm text-slate-600" />
+            {image.startsWith('data:') && (
+              <p className="text-xs text-green-600 mt-1">File selected (base64). Will be used as image.</p>
+            )}
           </div>
           <div className="sm:col-span-2">
             <label className={labelClass}>Bio</label>
@@ -1410,6 +1429,341 @@ function ServicesManager(): JSX.Element {
               </div>
             ))}
           </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ============================================================
+ *  Store Manager (Products)
+ * ============================================================ */
+
+const PRODUCT_CATEGORIES = [
+  'Dog Food',
+  'Cat Food',
+  'Pet Accessories',
+  'Toys',
+  'Clothing',
+  'Medicine',
+  'Supplements',
+  'Grooming Products',
+  'Bird & Fish Supplies',
+]
+
+function StoreManager(): JSX.Element {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>('')
+
+  // form state
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [name, setName] = useState<string>('')
+  const [category, setCategory] = useState<string>('Dog Food')
+  const [price, setPrice] = useState<string>('')
+  const [image, setImage] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+  const [saving, setSaving] = useState<boolean>(false)
+  const [formMsg, setFormMsg] = useState<string>('')
+
+  // search/filter
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [filterCategory, setFilterCategory] = useState<string>('All')
+
+  const fetchProducts = useCallback(async (): Promise<void> => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch(`${API_BASE}/products?limit=2000`)
+      if (!res.ok) throw new Error('Failed to load products')
+      const data = await res.json()
+      setProducts(data.items || [])
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void fetchProducts()
+  }, [fetchProducts])
+
+  const resetForm = (): void => {
+    setEditingId(null)
+    setName('')
+    setCategory('Dog Food')
+    setPrice('')
+    setImage('')
+    setDescription('')
+    setFormMsg('')
+  }
+
+  const handleEdit = (product: Product): void => {
+    setEditingId(product.id)
+    setName(product.name)
+    setCategory(product.category)
+    setPrice(String(product.price))
+    setImage(product.image)
+    setDescription(product.description)
+    setFormMsg('')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      setImage(typeof reader.result === 'string' ? reader.result : '')
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault()
+    if (!name || !category) {
+      setFormMsg('Please fill in name and category.')
+      return
+    }
+    setSaving(true)
+    setFormMsg('')
+    try {
+      const body = {
+        id: editingId || undefined,
+        name,
+        category,
+        price: parseFloat(price) || 0,
+        image,
+        description,
+      }
+      const url = editingId
+        ? `${API_BASE}/products?id=${editingId}`
+        : `${API_BASE}/products`
+      const method = editingId ? 'PUT' : 'POST'
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      if (!res.ok) throw new Error('Failed to save product')
+      const saved: Product = await res.json()
+
+      setProducts((prev) => {
+        const idx = prev.findIndex((p) => p.id === saved.id)
+        if (idx >= 0) {
+          const copy = [...prev]
+          copy[idx] = saved
+          return copy
+        }
+        return [...prev, saved]
+      })
+
+      resetForm()
+      setFormMsg(editingId ? 'Product updated!' : 'Product added!')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setFormMsg(`Error: ${msg}`)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDelete = async (id: number): Promise<void> => {
+    if (!confirm('Delete this product? This cannot be undone.')) return
+    try {
+      const res = await fetch(`${API_BASE}/products?id=${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete product')
+      setProducts((prev) => prev.filter((p) => p.id !== id))
+      if (editingId === id) resetForm()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    }
+  }
+
+  // Filtered products for display
+  const displayedProducts = useMemo(() => {
+    let result = products
+    if (filterCategory !== 'All') {
+      result = result.filter((p) => p.category === filterCategory)
+    }
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase().trim()
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q)
+      )
+    }
+    return result
+  }, [products, filterCategory, searchTerm])
+
+  return (
+    <div className="space-y-8">
+      {/* Add/Edit form */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-slate-900">
+            {editingId ? `Edit Product #${editingId}` : 'Add New Product'}
+          </h2>
+          {editingId !== null && (
+            <button onClick={resetForm} className={btnGhost}>
+              <X className="h-4 w-4" />
+              Cancel Edit
+            </button>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>Name</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Product name" className={inputClass} />
+          </div>
+          <div>
+            <label className={labelClass}>Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className={inputClass}
+            >
+              {PRODUCT_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>Price (₹)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="0"
+              className={inputClass}
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label className={labelClass}>Image URL</label>
+            <input
+              value={image.startsWith('data:') ? '' : image}
+              onChange={(e) => setImage(e.target.value)}
+              placeholder="https://..."
+              className={inputClass}
+            />
+            <p className="text-xs text-slate-400 mt-1">Or upload a file below.</p>
+            <input type="file" accept="image/*" onChange={handleFile} className="mt-2 text-sm text-slate-600" />
+            {image && (
+              <div className="mt-2 inline-block">
+                <img
+                  src={image}
+                  alt="Preview"
+                  className="w-24 h-24 object-cover rounded-lg border border-slate-200"
+                />
+              </div>
+            )}
+          </div>
+          <div className="sm:col-span-2">
+            <label className={labelClass}>Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Product description..."
+              rows={3}
+              className={inputClass + ' resize-y'}
+            />
+          </div>
+          <div className="sm:col-span-2 flex items-center gap-4">
+            <button type="submit" className={btnPrimary} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              {saving ? 'Saving...' : editingId !== null ? 'Update Product' : 'Add Product'}
+            </button>
+            {formMsg && (
+              <span className={`text-sm ${formMsg.startsWith('Error') ? 'text-red-600' : 'text-green-600'}`}>
+                {formMsg}
+              </span>
+            )}
+          </div>
+        </form>
+      </div>
+
+      {/* Products list */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h2 className="text-lg font-bold text-slate-900">
+            Products ({products.length})
+          </h2>
+          <div className="flex gap-2 flex-wrap">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-ocean-500"
+            />
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-ocean-500"
+            >
+              <option value="All">All Categories</option>
+              {PRODUCT_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-ocean-600" />
+          </div>
+        ) : error ? (
+          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+        ) : displayedProducts.length === 0 ? (
+          <p className="text-sm text-slate-500 text-center py-8">No products found.</p>
+        ) : (
+          <>
+            <p className="text-xs text-slate-400 mb-3">
+              Showing {displayedProducts.length} of {products.length} products
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {displayedProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:border-ocean-300 transition-colors"
+                >
+                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+                    {product.image ? (
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ShoppingBag className="h-5 w-5 text-slate-300" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-slate-900 truncate">{product.name}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-ocean-100 text-ocean-700">
+                        {product.category}
+                      </span>
+                      <span className="text-xs font-bold text-slate-700">₹{product.price}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <button onClick={() => handleEdit(product)} className={btnGhost + ' !px-2 !py-2'} title="Edit product">
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button onClick={() => void handleDelete(product.id)} className={btnDanger + ' !px-2 !py-2'} title="Delete product">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

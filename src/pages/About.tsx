@@ -13,7 +13,6 @@ import {
   Pill,
   Home as HomeIcon,
   Scissors,
-  Activity,
   ArrowRight,
   BadgeCheck,
 } from "lucide-react"
@@ -69,7 +68,7 @@ const facilities = [
   {
     icon: Microscope,
     title: "Diagnostic Lab",
-    description: "In-house laboratory with blood analyzers, ultrasound, and microscopy for rapid, accurate diagnostics.",
+    description: "Laboratory with blood analyzers, ultrasound, and microscopy for rapid, accurate diagnostics.",
   },
   {
     icon: Pill,
@@ -85,11 +84,6 @@ const facilities = [
     icon: Sparkles,
     title: "Grooming Station",
     description: "Professional grooming area with breed-specific tools, premium pet-safe products, and a stress-free environment.",
-  },
-  {
-    icon: Activity,
-    title: "ICU",
-    description: "Intensive Care Unit with oxygen therapy, vital signs monitoring, and dedicated care for critical patients.",
   },
 ]
 
@@ -182,7 +176,7 @@ export default function About() {
               </p>
               <p className="text-slate-600 mb-6">
                 Today, Vizag Animal Hospital offers comprehensive services including vaccinations,
-                critical care, all types of surgeries, in-house radiology &amp; blood tests, grooming
+                critical care, all types of surgeries, radiology &amp; blood tests, grooming
                 &amp; spa, doorstep services, and a fully stocked pet store — all under one roof.
               </p>
             </motion.div>
@@ -268,7 +262,7 @@ export default function About() {
               const Icon = value.icon
               return (
                 <motion.div key={index} variants={itemFade}>
-                  <Card hover className="p-6 h-full">
+                  <Card hover className="p-6 h-full text-center">
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-coral-50 text-coral-500 mb-4">
                       <Icon className="h-6 w-6" />
                     </div>
@@ -297,24 +291,20 @@ export default function About() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="flex flex-wrap justify-center gap-6"
           >
             {facilities.map((facility, index) => {
               const Icon = facility.icon
               return (
-                <motion.div key={index} variants={itemFade}>
-                  <Card hover className="p-6 h-full">
-                    <div className="flex items-start gap-4">
-                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-ocean-50 text-ocean-700 flex-shrink-0">
-                        <Icon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold font-heading text-slate-900 mb-2">
-                          {facility.title}
-                        </h3>
-                        <p className="text-sm text-slate-600">{facility.description}</p>
-                      </div>
+                <motion.div key={index} variants={itemFade} className="w-full sm:w-80">
+                  <Card hover className="p-6 h-full text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-ocean-50 text-ocean-700 mb-4">
+                      <Icon className="h-6 w-6" />
                     </div>
+                    <h3 className="text-lg font-semibold font-heading text-slate-900 mb-2">
+                      {facility.title}
+                    </h3>
+                    <p className="text-sm text-slate-600">{facility.description}</p>
                   </Card>
                 </motion.div>
               )
@@ -331,7 +321,7 @@ export default function About() {
             title="Certifications & Memberships"
             subtitle="We are proud to be recognized and certified by leading veterinary authorities and animal welfare organizations."
           />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             {certifications.map((cert, index) => (
               <motion.div
                 key={index}
@@ -339,6 +329,7 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="w-full sm:w-80"
               >
                 <Card hover className="p-8 text-center h-full">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-ocean-100 to-coral-100 text-ocean-700 mb-5">

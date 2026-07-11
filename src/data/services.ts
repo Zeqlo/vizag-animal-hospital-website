@@ -41,7 +41,6 @@ export const services: Service[] = [
     features: [
       "Trauma & accident care",
       "Poisoning treatment",
-      "ICU monitoring",
       "Oxygen therapy",
       "Intravenous fluid therapy",
       "Small & large animal management",
@@ -129,9 +128,9 @@ export const services: Service[] = [
   {
     slug: "radiology-blood-tests",
     title: "Blood Tests & Diagnostic Imaging",
-    shortDescription: "In-house diagnostic services including blood tests, ultrasound scanning, echo, and comprehensive lab work.",
+    shortDescription: "Diagnostic services including blood tests, ultrasound scanning, echo, and comprehensive lab work.",
     longDescription:
-      "Our in-house diagnostic facility provides quick and accurate results. With blood analyzers, ultrasound scanning, echo, and microscopy, we can diagnose conditions rapidly and start treatment without delay. Having these services in-house means faster diagnosis and better outcomes for your pet.",
+      "Our diagnostic facility provides quick and accurate results. With blood analyzers, ultrasound scanning, echo, and microscopy, we can diagnose conditions rapidly and start treatment without delay. Having these services on-site means faster diagnosis and better outcomes for your pet.",
     icon: "Microscope",
     features: [
       "Complete blood count (CBC)",
