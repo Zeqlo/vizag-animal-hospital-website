@@ -192,29 +192,12 @@ export default function Home() {
                     </Button>
                   </Link>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="w-full">
-                      <Button variant="primary" size="lg" className="w-full">
-                        <Phone className="h-5 w-5" />
-                        Call Now
-                      </Button>
-                    </a>
-                    <a
-                      href={`https://wa.me/${whatsappNumber}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full"
-                    >
-                      <Button
-                        variant="outline-white"
-                        size="lg"
-                        className="w-full !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
-                      >
-                        <MessageCircle className="h-5 w-5 !text-green-600 hover:!text-white" />
-                        WhatsApp
-                      </Button>
-                    </a>
-                  </div>
+                  <Link to="/services" className="w-full">
+                    <Button variant="ghost" size="md" className="w-full text-slate-600 hover:text-ocean-700 hover:bg-slate-100">
+                      Explore Our Services
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
                 </motion.div>
 
                 <motion.div
