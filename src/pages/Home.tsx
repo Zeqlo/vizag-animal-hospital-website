@@ -204,7 +204,7 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
-                  className="mt-6 sm:mt-8 mb-4 sm:mb-0 flex flex-wrap items-center gap-3 sm:gap-6 text-slate-500"
+                  className="mt-6 sm:mt-8 mb-8 sm:mb-0 flex flex-wrap items-center gap-3 sm:gap-6 text-slate-500"
                 >
                   <div className="flex items-center gap-1.5">
                     <PawPrint className="h-4 w-4 text-coral-500" />
@@ -236,17 +236,20 @@ export default function Home() {
 
             {/* Mobile collage */}
             <div className="order-1 lg:hidden">
-              <div className="flex gap-3 items-end justify-center">
-                <img
-                  src="/dog-hero.jpg"
-                  alt="Happy beagle dog"
-                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
-                />
-                <img
-                  src="/cat-hero.jpg"
-                  alt="Friendly cat"
-                  className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
-                />
+              <div className="relative">
+                <div className="absolute inset-x-0 -top-4 bottom-8 bg-gradient-to-tr from-coral-100 via-ocean-50 to-green-50 rounded-[2.5rem] -rotate-3 scale-105 -z-10 opacity-80" />
+                <div className="flex gap-3 items-end justify-center">
+                  <img
+                    src="/dog-hero.jpg"
+                    alt="Happy beagle dog"
+                    className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
+                  />
+                  <img
+                    src="/cat-hero.jpg"
+                    alt="Friendly cat"
+                    className="w-[48%] h-56 object-cover rounded-3xl shadow-xl border-4 border-white"
+                  />
+                </div>
               </div>
             </div>
           </div>
