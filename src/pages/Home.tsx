@@ -94,126 +94,137 @@ export default function Home() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative min-h-[600px] sm:min-h-[640px] lg:min-h-[720px] flex items-center overflow-hidden bg-slate-50">
-        {/* Right-side animal collage on desktop */}
-        <div className="hidden sm:flex absolute inset-y-0 right-0 w-1/2 lg:w-[55%] items-center justify-center p-6 lg:p-12">
-          <div className="relative w-full max-w-2xl aspect-[4/3]">
-            <img
-              src="/dog-hero.jpg"
-              alt="Happy beagle dog"
-              className="absolute top-0 left-0 w-[58%] h-[75%] object-cover rounded-3xl shadow-2xl border-4 border-white"
-            />
-            <img
-              src="/cat-hero.jpg"
-              alt="Friendly cat"
-              className="absolute bottom-0 right-0 w-[55%] h-[70%] object-cover rounded-3xl shadow-2xl border-4 border-white"
-            />
-          </div>
-        </div>
-
-        {/* Mobile background: single bright animal photo */}
-        <div className="absolute inset-0 sm:hidden">
-          <img
-            src="/dog-hero.jpg"
-            alt="Happy beagle dog"
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-slate-900/20"></div>
-        </div>
-
-        <Container className="relative z-10 py-12 sm:py-16 lg:py-20 w-full">
-          <div className="max-w-xl sm:bg-white/95 sm:backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-coral-500 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold mb-4 sm:mb-6 shadow-sm"
-            >
-              <PawPrint className="h-4 w-4" />
-              {clinicInfo.tagline}
-            </motion.span>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-white sm:text-slate-900 leading-[1.1] drop-shadow-sm sm:drop-shadow-none break-words"
-            >
-              {clinicInfo.name}
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-4 sm:mt-6 text-base sm:text-xl text-white/95 sm:text-slate-600 max-w-xl drop-shadow-sm sm:drop-shadow-none break-words"
-            >
-              {clinicInfo.shortDescription}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
-            >
-              <Link to="/book-appointment" className="w-full sm:w-auto">
-                <Button variant="accent" size="lg" className="w-full sm:w-auto">
-                  <Calendar className="h-5 w-5" />
-                  Book Appointment
-                </Button>
-              </Link>
-              <Link to="/services" className="w-full sm:w-auto">
-                <Button variant="outline-white" size="lg" className="w-full sm:w-auto">
-                  Explore Services
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4"
-            >
-              <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="w-full sm:w-auto">
-                <Button variant="primary" size="lg" className="w-full sm:w-auto">
-                  <Phone className="h-5 w-5" />
-                  <span className="sm:hidden">Call Now</span>
-                  <span className="hidden sm:inline">Call {clinicInfo.phone}</span>
-                </Button>
-              </a>
-              <a
-                href={`https://wa.me/${whatsappNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto"
-              >
-                <Button
-                  variant="outline-white"
-                  size="lg"
-                  className="w-full sm:w-auto !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
+      <section className="relative overflow-hidden bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-12 sm:py-16 lg:py-20">
+            {/* Text content */}
+            <div className="order-1 lg:order-1">
+              <div className="sm:bg-white/95 sm:backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10 sm:shadow-xl">
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="inline-flex items-center gap-2 bg-coral-500 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold mb-4 sm:mb-6 shadow-sm"
                 >
-                  <MessageCircle className="h-5 w-5 !text-green-600 hover:!text-white" />
-                  WhatsApp Us
-                </Button>
-              </a>
-            </motion.div>
+                  <PawPrint className="h-4 w-4" />
+                  {clinicInfo.tagline}
+                </motion.span>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-8 sm:mt-12 flex flex-wrap items-center gap-4 sm:gap-6 text-white/90"
-            >
-              <div className="flex items-center gap-2">
-                <PawPrint className="h-5 w-5" />
-                <span className="text-xs sm:text-sm font-medium">Pet Store Onsite</span>
+                <motion.h1
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="text-3xl sm:text-5xl lg:text-6xl font-bold font-heading text-slate-900 leading-[1.1] break-words"
+                >
+                  {clinicInfo.name}
+                </motion.h1>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="mt-4 sm:mt-6 text-base sm:text-xl text-slate-600 max-w-xl break-words"
+                >
+                  {clinicInfo.shortDescription}
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
+                >
+                  <Link to="/book-appointment" className="w-full sm:w-auto">
+                    <Button variant="accent" size="lg" className="w-full sm:w-auto">
+                      <Calendar className="h-5 w-5" />
+                      Book Appointment
+                    </Button>
+                  </Link>
+                  <Link to="/services" className="w-full sm:w-auto">
+                    <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+                      Our Services
+                      <ArrowRight className="h-5 w-5" />
+                    </Button>
+                  </Link>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4"
+                >
+                  <a href={`tel:${clinicInfo.phone.replace(/\s/g, "")}`} className="w-full sm:w-auto">
+                    <Button variant="primary" size="lg" className="w-full sm:w-auto">
+                      <Phone className="h-5 w-5" />
+                      <span className="sm:hidden">Call Now</span>
+                      <span className="hidden sm:inline">Call {clinicInfo.phone}</span>
+                    </Button>
+                  </a>
+                  <a
+                    href={`https://wa.me/${whatsappNumber}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto"
+                  >
+                    <Button
+                      variant="outline-white"
+                      size="lg"
+                      className="w-full sm:w-auto !border-green-600 !text-green-700 hover:!bg-green-600 hover:!text-white"
+                    >
+                      <MessageCircle className="h-5 w-5 !text-green-600 hover:!text-white" />
+                      WhatsApp Us
+                    </Button>
+                  </a>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  className="mt-8 sm:mt-12 flex flex-wrap items-center gap-4 sm:gap-6 text-slate-600"
+                >
+                  <div className="flex items-center gap-2">
+                    <PawPrint className="h-5 w-5 text-coral-500" />
+                    <span className="text-xs sm:text-sm font-medium">Pet Store Onsite</span>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
+            </div>
+
+            {/* Desktop collage */}
+            <div className="hidden lg:flex order-2 items-center justify-center">
+              <div className="relative w-full max-w-2xl aspect-[4/3]">
+                <img
+                  src="/dog-hero.jpg"
+                  alt="Happy beagle dog"
+                  className="absolute top-0 left-0 w-[58%] h-[75%] object-cover rounded-3xl shadow-2xl border-4 border-white"
+                />
+                <img
+                  src="/cat-hero.jpg"
+                  alt="Friendly cat"
+                  className="absolute bottom-0 right-0 w-[55%] h-[70%] object-cover rounded-3xl shadow-2xl border-4 border-white"
+                />
+              </div>
+            </div>
+
+            {/* Mobile collage */}
+            <div className="order-2 lg:hidden">
+              <div className="relative w-full aspect-[4/3] max-w-md mx-auto">
+                <img
+                  src="/dog-hero.jpg"
+                  alt="Happy beagle dog"
+                  className="absolute top-0 left-0 w-[58%] h-[75%] object-cover rounded-3xl shadow-2xl border-4 border-white"
+                />
+                <img
+                  src="/cat-hero.jpg"
+                  alt="Friendly cat"
+                  className="absolute bottom-0 right-0 w-[55%] h-[70%] object-cover rounded-3xl shadow-2xl border-4 border-white"
+                />
+              </div>
+            </div>
           </div>
-        </Container>
+        </div>
       </section>
 
       {/* Featured Services */}
