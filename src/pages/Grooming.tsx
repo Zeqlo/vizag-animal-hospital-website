@@ -380,7 +380,7 @@ export default function Grooming() {
               transition={{ duration: 0.6 }}
             >
               <img
-                src="https://images.unsplash.com/photo-1591946614720-90b49d81f3bd?w=600&h=400&fit=crop"
+                src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&h=400&fit=crop"
                 alt="Pet grooming at Vizag Animal Hospital"
                 className="rounded-2xl shadow-xl w-full object-cover"
               />

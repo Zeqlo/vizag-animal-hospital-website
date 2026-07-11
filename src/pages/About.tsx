@@ -123,7 +123,7 @@ export default function About() {
         <title>About Us | Vizag Animal Hospital</title>
         <meta
           name="description"
-          content="Learn about Vizag Animal Hospital & Store in Visakhapatnam. Discover our mission, values, facilities, and our certified veterinary team led by Dr. K. Mounika (BVSc. & AH, M.V.Sc)."
+          content="Learn about Vizag Animal Hospital & Store in Visakhapatnam. Discover our mission, values, facilities, and our certified veterinary team led by Dr. Vani Poosapati (DVM) and Dr. K. Mounika (BVSc. & AH, M.V.Sc)."
         />
       </Helmet>
 
@@ -169,10 +169,10 @@ export default function About() {
                 trusted by thousands of pet parents across the city.
               </p>
               <p className="text-slate-600 mb-4">
-                Led by <strong>Dr. K. Mounika</strong> (BVSc. &amp; AH, M.V.Sc), our team brings
-                together expertise in general medicine, surgery, diagnostics, and animal welfare.
-                With advanced qualifications and a deep love for animals, we combine modern medical
-                technology with genuine compassion.
+                Led by <strong>Dr. Vani Poosapati</strong> (DVM) and <strong>Dr. K. Mounika</strong>
+                (BVSc. &amp; AH, M.V.Sc), our team brings together expertise in general medicine,
+                surgery, diagnostics, and animal welfare. With advanced qualifications and a deep
+                love for animals, we combine modern medical technology with genuine compassion.
               </p>
               <p className="text-slate-600 mb-6">
                 Today, Vizag Animal Hospital offers comprehensive services including vaccinations,

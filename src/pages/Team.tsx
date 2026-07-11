@@ -24,7 +24,7 @@ export default function Team() {
         <title>Our Veterinary Team | Vizag Animal Hospital</title>
         <meta
           name="description"
-          content="Meet the dedicated veterinarians at Vizag Animal Hospital in Visakhapatnam — Dr. K. Mounika. Experienced, compassionate, and ready to care for your pets."
+          content="Meet the dedicated veterinarians at Vizag Animal Hospital in Visakhapatnam — Dr. Vani Poosapati (DVM) and Dr. K. Mounika (BVSc. & AH, M.V.Sc). Experienced, compassionate, and ready to care for your pets."
         />
       </Helmet>
 
