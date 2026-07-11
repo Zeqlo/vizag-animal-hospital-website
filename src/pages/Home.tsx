@@ -215,6 +215,8 @@ export default function Home() {
                     <span className="text-xs font-medium">4.9 Google Rating</span>
                   </div>
                 </motion.div>
+
+                <div className="h-8 sm:hidden" />
               </div>
             </div>
 
