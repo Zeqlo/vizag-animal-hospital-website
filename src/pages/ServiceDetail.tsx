@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { Link, useParams } from "react-router-dom"
 import {
   Stethoscope,
@@ -90,9 +90,11 @@ export default function ServiceDetail() {
   if (!service) {
     return (
       <>
-        <Helmet>
-          <title>Service Not Found | Vizag Animal Hospital</title>
-        </Helmet>
+        <Seo
+          title="Service Not Found | Vizag Animal Hospital"
+          description="The service you are looking for could not be found."
+          path="/services"
+        />
         <Section bg="white" className="min-h-[60vh] flex items-center">
           <Container>
             <div className="text-center max-w-md mx-auto">
@@ -132,10 +134,11 @@ export default function ServiceDetail() {
 
   return (
     <>
-      <Helmet>
-        <title>{service.title} | Vizag Animal Hospital</title>
-        <meta name="description" content={service.shortDescription} />
-      </Helmet>
+      <Seo
+        title={`${service.title} | Vizag Animal Hospital`}
+        description={service.shortDescription}
+        path={`/services/${service.slug}`}
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-14 sm:py-20">

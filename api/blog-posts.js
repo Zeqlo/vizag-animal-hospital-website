@@ -4,13 +4,36 @@ const supabaseUrl = process.env.SUPABASE_URL || ''
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+// Auto-purge items soft-deleted more than 30 days ago. Runs silently.
+async function autoPurge() {
+  try {
+    const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+    await supabase
+      .from('blog_posts')
+      .delete()
+      .lt('deleted_at', cutoff)
+  } catch {
+    /* ignore - column may not exist yet */
+  }
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .order('created_at', { ascending: false })
+      const { trash } = req.query
+
+      // Auto-purge expired soft-deleted items
+      await autoPurge()
+
+      let query = supabase.from('blog_posts').select('*')
+
+      if (trash === 'true') {
+        query = query.not('deleted_at', 'is', null).order('deleted_at', { ascending: false })
+      } else {
+        query = query.is('deleted_at', null).order('created_at', { ascending: false })
+      }
+
+      const { data, error } = await query
       if (error) throw error
       const posts = (data || []).map(row => ({
         slug: row.slug,
@@ -21,6 +44,7 @@ export default async function handler(req, res) {
         readTime: row.readTime,
         image: row.image || '',
         youtubeUrl: row.youtubeUrl || undefined,
+        deletedAt: row.deleted_at || undefined,
       }))
       res.setHeader('Content-Type', 'application/json')
       return res.status(200).json(posts)
@@ -65,19 +89,62 @@ export default async function handler(req, res) {
       })
     }
 
+    if (req.method === 'PUT') {
+      // Restore: PUT ?restore=<slug>
+      const restoreSlug = req.query.restore
+      if (restoreSlug) {
+        const { error } = await supabase
+          .from('blog_posts')
+          .update({ deleted_at: null })
+          .eq('slug', restoreSlug)
+
+        if (error) throw error
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(200).json({ success: true, slug: restoreSlug })
+      }
+
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(400).json({ error: 'Missing restore query parameter' })
+    }
+
     if (req.method === 'DELETE') {
       const slug = req.query.slug
+      const permanent = req.query.permanent === 'true'
+
       if (!slug) {
         res.setHeader('Content-Type', 'application/json')
         return res.status(400).json({ error: 'Missing slug query parameter' })
       }
 
-      const { error } = await supabase
+      if (permanent) {
+        // Hard delete
+        const { error } = await supabase
+          .from('blog_posts')
+          .delete()
+          .eq('slug', slug)
+
+        if (error) throw error
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(200).json({ success: true, slug })
+      }
+
+      // Soft delete - try to set deleted_at; fall back to hard delete if column missing
+      const { error: softError } = await supabase
         .from('blog_posts')
-        .delete()
+        .update({ deleted_at: new Date().toISOString() })
         .eq('slug', slug)
 
-      if (error) throw error
+      if (softError) {
+        // Fallback: hard delete
+        const { error: hardError } = await supabase
+          .from('blog_posts')
+          .delete()
+          .eq('slug', slug)
+
+        if (hardError) throw hardError
+      }
 
       res.setHeader('Content-Type', 'application/json')
       return res.status(200).json({ success: true, slug })

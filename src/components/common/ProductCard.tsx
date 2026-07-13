@@ -28,7 +28,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       <div className="p-3 sm:p-4">
         <Badge variant="slate" className="mb-2 text-[10px] sm:text-xs">{product.category}</Badge>
         <h3 className="font-semibold text-slate-900 text-xs sm:text-sm leading-snug mb-1 line-clamp-2">{product.name}</h3>
-        <p className="text-[10px] sm:text-xs text-slate-500 mb-2 line-clamp-2 hidden sm:block">{product.description}</p>
         <div className="flex items-center justify-between gap-1">
           <span className="text-base sm:text-lg font-bold text-slate-900">₹{product.price}</span>
           <a

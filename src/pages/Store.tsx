@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react"
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { MapPin, Scissors, ShoppingBag, Star, Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
@@ -82,13 +82,11 @@ export default function Store() {
 
   return (
     <>
-      <Helmet>
-        <title>Pet Store | Vizag Animal Hospital</title>
-        <meta
-          name="description"
-          content="Shop quality pet food, accessories, toys, clothing, medicine, supplements, grooming products, and bird & fish supplies at the Vizag Animal Hospital pet store in Visakhapatnam."
-        />
-      </Helmet>
+      <Seo
+        title="Pet Store | Vizag Animal Hospital"
+        description="Shop quality pet food, accessories, toys, clothing, medicine, supplements, grooming products, and bird & fish supplies at the Vizag Animal Hospital pet store in Visakhapatnam."
+        path="/store"
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 to-ocean-700 py-16 sm:py-28 overflow-hidden">

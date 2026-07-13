@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
+import { Seo } from '@/components/common/Seo'
 import { Link } from 'react-router-dom'
 import { Home, PawPrint, Search } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/Button'
 export default function NotFound() {
   return (
     <>
-      <Helmet>
-        <title>404 - Page Not Found | Vizag Animal Hospital</title>
-      </Helmet>
+      <Seo
+        title="404 - Page Not Found | Vizag Animal Hospital"
+        description="The page you are looking for could not be found."
+        path="/404"
+      />
 
       <section className="min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-ocean-50 via-white to-coral-50 py-20">
         <Container>

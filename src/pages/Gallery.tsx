@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Camera, ImageIcon, Loader2 } from "lucide-react"
 import { Dialog } from "@headlessui/react"
@@ -48,13 +48,11 @@ export default function Gallery() {
 
   return (
     <>
-      <Helmet>
-        <title>Gallery | Vizag Animal Hospital</title>
-        <meta
-          name="description"
-          content="Explore photos of our clinic facilities, happy pets, events, and grooming services at Vizag Animal Hospital in Visakhapatnam."
-        />
-      </Helmet>
+      <Seo
+        title="Gallery | Vizag Animal Hospital"
+        description="Explore photos of our clinic facilities, happy pets, events, and grooming services at Vizag Animal Hospital in Visakhapatnam."
+        path="/gallery"
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 to-ocean-700 py-16 sm:py-28 overflow-hidden">

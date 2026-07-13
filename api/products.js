@@ -4,10 +4,49 @@ const supabaseUrl = process.env.SUPABASE_URL || ''
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+// Auto-purge items soft-deleted more than 30 days ago. Runs silently.
+async function autoPurge() {
+  try {
+    const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+    await supabase
+      .from('products')
+      .delete()
+      .lt('deleted_at', cutoff)
+  } catch {
+    /* ignore - column may not exist yet */
+  }
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
-      const { category, search } = req.query
+      const { category, search, trash } = req.query
+
+      // Auto-purge expired soft-deleted items
+      await autoPurge()
+
+      if (trash === 'true') {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .not('deleted_at', 'is', null)
+          .order('deleted_at', { ascending: false })
+
+        if (error) throw error
+
+        const items = (data || []).map(row => ({
+          id: row.id,
+          name: row.name,
+          category: row.category,
+          price: Number(row.price),
+          image: row.image,
+          description: row.description,
+          deletedAt: row.deleted_at || undefined,
+        }))
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(200).json({ items, total: items.length })
+      }
 
       // Supabase caps queries at 1000 rows by default, so we paginate
       const PAGE_SIZE = 1000
@@ -19,6 +58,7 @@ export default async function handler(req, res) {
         let query = supabase
           .from('products')
           .select('*')
+          .is('deleted_at', null)
           .order('id', { ascending: true })
           .range(offset, offset + PAGE_SIZE - 1)
 
@@ -46,6 +86,7 @@ export default async function handler(req, res) {
         price: Number(row.price),
         image: row.image,
         description: row.description,
+        deletedAt: row.deleted_at || undefined,
       }))
 
       res.setHeader('Content-Type', 'application/json')
@@ -87,6 +128,21 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PUT') {
+      // Restore: PUT ?restore=<id>
+      const restoreId = req.query.restore
+      if (restoreId) {
+        const { error } = await supabase
+          .from('products')
+          .update({ deleted_at: null })
+          .eq('id', restoreId)
+
+        if (error) throw error
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(200).json({ success: true, id: Number(restoreId) })
+      }
+
+      // Normal update by id
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       const id = body.id || req.query.id
 
@@ -124,17 +180,41 @@ export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
       const id = req.query.id
+      const permanent = req.query.permanent === 'true'
+
       if (!id) {
         res.setHeader('Content-Type', 'application/json')
         return res.status(400).json({ error: 'Missing id query parameter' })
       }
 
-      const { error } = await supabase
+      if (permanent) {
+        // Hard delete
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', id)
+
+        if (error) throw error
+
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(200).json({ success: true, id: Number(id) })
+      }
+
+      // Soft delete - try to set deleted_at; fall back to hard delete if column missing
+      const { error: softError } = await supabase
         .from('products')
-        .delete()
+        .update({ deleted_at: new Date().toISOString() })
         .eq('id', id)
 
-      if (error) throw error
+      if (softError) {
+        // Fallback: hard delete
+        const { error: hardError } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', id)
+
+        if (hardError) throw hardError
+      }
 
       res.setHeader('Content-Type', 'application/json')
       return res.status(200).json({ success: true, id: Number(id) })

@@ -1,11 +1,9 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
-import { Bell, Loader2, Newspaper } from 'lucide-react'
+import { Seo } from '@/components/common/Seo'
+import { Loader2, Newspaper } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
 import { BlogCard } from '@/components/common/BlogCard'
 import { useApiData } from '@/hooks/useApiData'
 
@@ -36,10 +34,11 @@ export default function Blog() {
 
   return (
     <>
-      <Helmet>
-        <title>Pet Care Blog | Vizag Animal Hospital</title>
-        <meta name="description" content="Expert pet care tips, veterinary advice, and health guides from the team at Vizag Animal Hospital, Visakhapatnam." />
-      </Helmet>
+      <Seo
+        title="Pet Care Blog | Vizag Animal Hospital"
+        description="Expert pet care tips, veterinary advice, and health guides from the team at Vizag Animal Hospital, Visakhapatnam."
+        path="/blog"
+      />
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-16 sm:py-20">
@@ -109,44 +108,6 @@ export default function Blog() {
               </motion.div>
             </AnimatePresence>
           )}
-        </Container>
-      </Section>
-
-      {/* Newsletter CTA */}
-      <Section bg="gradient">
-        <Container>
-          <Card className="p-8 sm:p-12 text-center max-w-2xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-coral-100 mb-5">
-                <Bell className="h-7 w-7 text-coral-600" />
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold font-heading text-slate-900 mb-3">
-                Subscribe to Our Newsletter
-              </h2>
-              <p className="text-slate-600 mb-6">
-                Get the latest pet care tips and clinic updates delivered straight to your inbox.
-              </p>
-              <form
-                onSubmit={(e) => e.preventDefault()}
-                className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-              >
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-ocean-500 focus:border-transparent"
-                />
-                <Button type="submit" variant="accent" size="md" className="flex-shrink-0">
-                  Subscribe
-                </Button>
-              </form>
-              <p className="text-xs text-slate-400 mt-4">No spam, ever. Unsubscribe anytime.</p>
-            </motion.div>
-          </Card>
         </Container>
       </Section>
     </>

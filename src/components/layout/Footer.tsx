@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Link } from "react-router-dom"
 import { Facebook, Instagram, Phone, MapPin, Clock, Heart } from "lucide-react"
 import { clinicInfo } from "@/data/clinicInfo"
@@ -6,24 +5,6 @@ import { services as servicesStatic } from "@/data/services"
 
 export function Footer() {
   const services = servicesStatic
-  const [newsletterEmail, setNewsletterEmail] = useState("")
-  const [subscribed, setSubscribed] = useState(false)
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newsletterEmail) return
-    try {
-      await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: newsletterEmail }),
-      })
-      setSubscribed(true)
-      setNewsletterEmail("")
-    } catch {
-      // silently ignore
-    }
-  }
   const quickLinks = [
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about" },
@@ -44,8 +25,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-white ring-1 ring-slate-700 flex items-center justify-center overflow-hidden">
+            <Link to="/" className="flex items-center gap-2 mb-4 group">
+              <div className="w-10 h-10 rounded-xl bg-white ring-1 ring-slate-700 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
                 <img
                   src="/logo.png"
                   alt="Vizag Animal Hospital & Store logo"
@@ -56,7 +37,7 @@ export function Footer() {
                 <span className="block font-heading font-bold text-white text-lg leading-none">Vizag Animal</span>
                 <span className="block text-xs text-slate-400">Hospital &amp; Store</span>
               </div>
-            </div>
+            </Link>
             <p className="text-sm text-slate-400 leading-relaxed mb-4">
               {clinicInfo.shortDescription}
             </p>
@@ -101,7 +82,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-ocean-400 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-slate-400">{clinicInfo.address.full}</span>
+                <a href={clinicInfo.mapLink} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-400 hover:text-coral-400 transition-colors">{clinicInfo.address.full}</a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-ocean-400 flex-shrink-0" />
@@ -130,28 +111,17 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <h3 className="text-white font-semibold text-lg">Stay Updated</h3>
-              <p className="text-sm text-slate-400 mt-1">Subscribe to our newsletter for pet care tips and clinic updates.</p>
+              <p className="text-sm text-slate-400 mt-1">Follow us on Facebook and Instagram for pet care tips and clinic updates.</p>
             </div>
-            <form onSubmit={handleSubscribe} className="flex w-full sm:w-auto gap-2">
-              <input
-                type="email"
-                required
-                value={newsletterEmail}
-                onChange={(e) => { setNewsletterEmail(e.target.value); setSubscribed(false) }}
-                placeholder="Enter your email"
-                className="flex-1 sm:w-64 px-4 py-2 rounded-lg bg-slate-800 text-white text-sm border border-slate-700 focus:border-ocean-500 focus:outline-none placeholder:text-slate-500"
-              />
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-lg bg-ocean-700 hover:bg-ocean-600 text-white text-sm font-semibold transition-colors whitespace-nowrap"
-              >
-                Subscribe
-              </button>
-            </form>
+            <div className="flex gap-3">
+              <a href={clinicInfo.social.facebook} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-ocean-700 flex items-center justify-center transition-colors" aria-label="Facebook">
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a href={clinicInfo.social.instagram} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-ocean-700 flex items-center justify-center transition-colors" aria-label="Instagram">
+                <Instagram className="h-4 w-4" />
+              </a>
+            </div>
           </div>
-          {subscribed && (
-            <p className="text-sm text-ocean-400 mt-3 font-medium">Subscribed!</p>
-          )}
         </div>
       </div>
 

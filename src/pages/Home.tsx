@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import { Helmet } from "react-helmet-async"
 import { Link } from "react-router-dom"
+import { clinicInfo } from "@/data/clinicInfo"
 import {
   Award,
   Activity,
@@ -23,7 +24,6 @@ import { TestimonialCard } from "@/components/common/TestimonialCard"
 import { ProductCard } from "@/components/common/ProductCard"
 import { services as servicesStatic, type Service } from "@/data/services"
 import { testimonials } from "@/data/testimonials"
-import { clinicInfo } from "@/data/clinicInfo"
 import { products } from "@/data/products"
 
 const whyChooseUs = [
@@ -89,6 +89,72 @@ export default function Home() {
           name="description"
           content="Vizag Animal Hospital & Store is a full-service veterinary hospital and pet store in Visakhapatnam (Vizag) offering expert pet care, surgery, diagnostics, grooming, and quality pet products."
         />
+        <link rel="canonical" href="https://vizag-animal-hospital.in/" />
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://vizag-animal-hospital.in/" />
+        <meta property="og:title" content="Vizag Animal Hospital & Store | Visakhapatnam" />
+        <meta property="og:description" content="Full-service veterinary hospital and pet store in Visakhapatnam. Expert pet care, surgery, diagnostics, grooming, and quality pet products. Open 9 AM–9:30 PM." />
+        <meta property="og:image" content="https://vizag-animal-hospital.in/og-image.jpg" />
+        <meta property="og:site_name" content="Vizag Animal Hospital & Store" />
+        <meta property="og:locale" content="en_IN" />
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Vizag Animal Hospital & Store | Visakhapatnam" />
+        <meta name="twitter:description" content="Full-service veterinary hospital and pet store in Visakhapatnam. Expert pet care, surgery, diagnostics, grooming, and quality pet products." />
+        <meta name="twitter:image" content="https://vizag-animal-hospital.in/og-image.jpg" />
+        {/* JSON-LD Structured Data: VeterinaryCare */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "VeterinaryCare",
+            "name": "Vizag Animal Hospital & Store",
+            "description": "Full-service veterinary hospital and pet store in Visakhapatnam offering expert pet care, surgery, diagnostics, grooming, and quality pet products.",
+            "url": "https://vizag-animal-hospital.in",
+            "telephone": "+91 90141 76278",
+            "email": "",
+            "image": "https://vizag-animal-hospital.in/og-image.jpg",
+            "priceRange": "₹₹",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "D.No: 3-72, HIG-120, Near Registrar Office, Chandrampalem, Midhilapuri VUDA Colony, Madhurawada",
+              "addressLocality": "Visakhapatnam",
+              "addressRegion": "Andhra Pradesh",
+              "postalCode": "530041",
+              "addressCountry": "IN"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 17.8035,
+              "longitude": 83.3506
+            },
+            "openingHoursSpecification": [
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+                "opens": "09:00",
+                "closes": "21:30"
+              },
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": "Sunday",
+                "opens": "09:00",
+                "closes": "14:00"
+              },
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": "Sunday",
+                "opens": "17:00",
+                "closes": "21:30"
+              }
+            ],
+            "sameAs": [
+              "https://maps.app.goo.gl/4TpLGbDUviYbmw9s8",
+              "https://facebook.com/vizaganimalhospital",
+              "https://instagram.com/vizaganimalhospital"
+            ]
+          })}
+        </script>
       </Helmet>
 
       {/* Hero Section */}
@@ -323,7 +389,7 @@ export default function Home() {
           <SectionTitle
             eyebrow="Google Reviews"
             title="What Pet Parents Say"
-            subtitle="Rated 4.9 stars by 372 pet parents on Google. Here are a few of their stories."
+            subtitle="Rated 4.9 by pet parents on Google. Here are a few of their stories."
           />
           {/* Rating summary bar */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
@@ -334,7 +400,7 @@ export default function Home() {
                 ))}
               </div>
               <span className="text-lg font-semibold text-slate-900">4.9</span>
-              <span className="text-sm text-slate-500">(372 Google reviews)</span>
+              <span className="text-sm text-slate-500">by pet parents</span>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

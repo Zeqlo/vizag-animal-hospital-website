@@ -6,15 +6,14 @@ import {
   Lock,
   Images,
   FileText,
-  Mail,
   Trash2,
   Plus,
   Pencil,
   X,
-  Send,
   LogOut,
   Loader2,
   ShoppingBag,
+  RotateCcw,
 } from 'lucide-react'
 
 // TODO: Replace with proper auth later
@@ -32,6 +31,7 @@ interface GalleryItem {
   title: string
   category: GalleryCategory
   image: string
+  deletedAt?: string
 }
 
 interface BlogPost {
@@ -43,22 +43,19 @@ interface BlogPost {
   readTime: string
   image: string
   youtubeUrl?: string
+  deletedAt?: string
 }
 
-interface Subscriber {
-  id: number
-  email: string
-  subscribedAt: string
-}
-
-interface TeamMember {
-  id: string
-  name: string
-  qualifications: string
-  specialization: string
-  bio: string
+interface BlogPost {
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  category: string
+  readTime: string
   image: string
-  role: 'veterinarian' | 'support'
+  youtubeUrl?: string
+  deletedAt?: string
 }
 
 interface Service {
@@ -80,6 +77,7 @@ interface Product {
   price: number
   image: string
   description: string
+  deletedAt?: string
 }
 
 /* ============================================================
@@ -95,6 +93,12 @@ const slugify = (text: string): string =>
     .replace(/^-+|-+$/g, '')
 
 const API_BASE = '/api'
+
+const daysUntilAutoDelete = (deletedAt: string): number => {
+  const deleted = new Date(deletedAt).getTime()
+  const autoDeleteAt = deleted + 30 * 24 * 60 * 60 * 1000
+  return Math.max(0, Math.ceil((autoDeleteAt - Date.now()) / (24 * 60 * 60 * 1000)))
+}
 
 /* ============================================================
  *  Small UI primitives
@@ -122,7 +126,7 @@ export default function Admin() {
   const [authed, setAuthed] = useState<boolean>(false)
   const [password, setPassword] = useState<string>('')
   const [authError, setAuthError] = useState<string>('')
-  const [activeTab, setActiveTab] = useState<'gallery' | 'blog' | 'subscribers' | 'team' | 'services' | 'store'>('gallery')
+  const [activeTab, setActiveTab] = useState<'gallery' | 'blog' | 'store'>('gallery')
 
   // Restore auth from localStorage on mount
   useEffect(() => {
@@ -219,7 +223,6 @@ export default function Admin() {
     { key: 'gallery', label: 'Gallery Manager', icon: Images },
     { key: 'blog', label: 'Blog Manager', icon: FileText },
     { key: 'store', label: 'Store Manager', icon: ShoppingBag },
-    { key: 'subscribers', label: 'Subscribers', icon: Mail },
   ]
 
   return (
@@ -234,7 +237,7 @@ export default function Admin() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-              <p className="text-sm text-slate-500">Manage gallery, blog posts, store products, and subscribers.</p>
+              <p className="text-sm text-slate-500">Manage gallery, blog posts, and store products.</p>
             </div>
             <button onClick={handleLogout} className={btnGhost}>
               <LogOut className="h-4 w-4" />
@@ -264,7 +267,6 @@ export default function Admin() {
           {activeTab === 'gallery' && <GalleryManager />}
           {activeTab === 'blog' && <BlogManager />}
           {activeTab === 'store' && <StoreManager />}
-          {activeTab === 'subscribers' && <SubscriberManager />}
         </Container>
       </Section>
     </>
@@ -279,6 +281,11 @@ function GalleryManager(): JSX.Element {
   const [items, setItems] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>('')
+
+  // trash state
+  const [showTrash, setShowTrash] = useState<boolean>(false)
+  const [trashItems, setTrashItems] = useState<GalleryItem[]>([])
+  const [trashLoading, setTrashLoading] = useState<boolean>(false)
 
   // form state
   const [title, setTitle] = useState<string>('')
@@ -300,6 +307,20 @@ function GalleryManager(): JSX.Element {
       setError(msg)
     } finally {
       setLoading(false)
+    }
+  }, [])
+
+  const fetchTrash = useCallback(async (): Promise<void> => {
+    setTrashLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/gallery?trash=true`)
+      if (!res.ok) throw new Error('Failed to load trash items')
+      const data: GalleryItem[] = await res.json()
+      setTrashItems(data)
+    } catch {
+      /* ignore */
+    } finally {
+      setTrashLoading(false)
     }
   }, [])
 
@@ -351,10 +372,44 @@ function GalleryManager(): JSX.Element {
       const res = await fetch(`${API_BASE}/gallery?id=${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
       setItems((prev) => prev.filter((i) => i.id !== id))
+      setFormMsg('Item moved to Recently Deleted. Auto-deletes after 30 days.')
+      // Refresh trash count
+      void fetchTrash()
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
       setError(msg)
     }
+  }
+
+  const handleRestore = async (id: number): Promise<void> => {
+    try {
+      const res = await fetch(`${API_BASE}/gallery?restore=${id}`, { method: 'PUT' })
+      if (!res.ok) throw new Error('Failed to restore')
+      void fetchItems()
+      void fetchTrash()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    }
+  }
+
+  const handlePermanentDelete = async (id: number): Promise<void> => {
+    if (!confirm('Permanently delete? This cannot be undone.')) return
+    try {
+      const res = await fetch(`${API_BASE}/gallery?id=${id}&permanent=true`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete permanently')
+      setTrashItems((prev) => prev.filter((i) => i.id !== id))
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    }
+  }
+
+  const toggleTrash = async (): Promise<void> => {
+    if (!showTrash && trashItems.length === 0) {
+      await fetchTrash()
+    }
+    setShowTrash((prev) => !prev)
   }
 
   return (
@@ -437,6 +492,66 @@ function GalleryManager(): JSX.Element {
           </div>
         )}
       </div>
+
+      {/* Recently Deleted */}
+      <div className="bg-white rounded-xl border-2 border-amber-300 p-6">
+        <button
+          onClick={() => void toggleTrash()}
+          className="flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-800"
+        >
+          <Trash2 className="h-4 w-4" />
+          Recently Deleted ({trashItems.length})
+          {showTrash ? ' ▲' : ' ▼'}
+        </button>
+        {showTrash && (
+          <div className="mt-4">
+            {trashLoading ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
+              </div>
+            ) : trashItems.length === 0 ? (
+              <p className="text-sm text-slate-500 text-center py-4">No deleted items.</p>
+            ) : (
+              <div className="space-y-3">
+                {trashItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-4 p-3 rounded-lg border border-amber-200 bg-amber-50"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-slate-900 truncate">{item.title}</p>
+                      <p className="text-xs text-amber-700 mt-0.5">
+                        Deleted: {item.deletedAt ? new Date(item.deletedAt).toLocaleDateString() : '—'}
+                      </p>
+                      <p className="text-[10px] text-amber-600">
+                        {item.deletedAt ? `Auto-deletes in ${daysUntilAutoDelete(item.deletedAt)} days` : ''}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => void handleRestore(item.id)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 text-xs font-semibold hover:bg-green-100 border border-green-200"
+                        title="Restore"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Restore
+                      </button>
+                      <button
+                        onClick={() => void handlePermanentDelete(item.id)}
+                        className={btnDanger + ' !text-xs !px-3 !py-1.5'}
+                        title="Delete permanently"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete Permanently
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -449,6 +564,11 @@ function BlogManager(): JSX.Element {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>('')
+
+  // trash state
+  const [showTrash, setShowTrash] = useState<boolean>(false)
+  const [trashItems, setTrashItems] = useState<BlogPost[]>([])
+  const [trashLoading, setTrashLoading] = useState<boolean>(false)
 
   // form state
   const [editingSlug, setEditingSlug] = useState<string>('')
@@ -476,6 +596,20 @@ function BlogManager(): JSX.Element {
       setError(msg)
     } finally {
       setLoading(false)
+    }
+  }, [])
+
+  const fetchTrash = useCallback(async (): Promise<void> => {
+    setTrashLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/blog-posts?trash=true`)
+      if (!res.ok) throw new Error('Failed to load trash items')
+      const data: BlogPost[] = await res.json()
+      setTrashItems(data)
+    } catch {
+      /* ignore */
+    } finally {
+      setTrashLoading(false)
     }
   }, [])
 
@@ -520,9 +654,9 @@ function BlogManager(): JSX.Element {
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
-    const finalSlug = editingSlug || slug || slugify(title)
-    if (!title || !finalSlug || !content || !category || !readTime) {
-      setFormMsg('Please fill in title, slug, content, category, and read time.')
+    const finalSlug = editingSlug || slugify(title)
+    if (!title || !content || !category || !readTime) {
+      setFormMsg('Please fill in title, content, category, and read time.')
       return
     }
     setSaving(true)
@@ -575,10 +709,48 @@ function BlogManager(): JSX.Element {
       if (!res.ok) throw new Error('Failed to delete post')
       setPosts((prev) => prev.filter((p) => p.slug !== slugToDelete))
       if (editingSlug === slugToDelete) resetForm()
+      setFormMsg('Post moved to Recently Deleted. Auto-deletes after 30 days.')
+      void fetchTrash()
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
       setError(msg)
     }
+  }
+
+  const handleRestore = async (slug: string): Promise<void> => {
+    try {
+      const res = await fetch(`${API_BASE}/blog-posts?restore=${encodeURIComponent(slug)}`, {
+        method: 'PUT',
+      })
+      if (!res.ok) throw new Error('Failed to restore')
+      void fetchPosts()
+      void fetchTrash()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    }
+  }
+
+  const handlePermanentDelete = async (slug: string): Promise<void> => {
+    if (!confirm('Permanently delete? This cannot be undone.')) return
+    try {
+      const res = await fetch(
+        `${API_BASE}/blog-posts?slug=${encodeURIComponent(slug)}&permanent=true`,
+        { method: 'DELETE' }
+      )
+      if (!res.ok) throw new Error('Failed to delete permanently')
+      setTrashItems((prev) => prev.filter((p) => p.slug !== slug))
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    }
+  }
+
+  const toggleTrash = async (): Promise<void> => {
+    if (!showTrash && trashItems.length === 0) {
+      await fetchTrash()
+    }
+    setShowTrash((prev) => !prev)
   }
 
   return (
@@ -603,16 +775,6 @@ function BlogManager(): JSX.Element {
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" className={inputClass} />
           </div>
           <div>
-            <label className={labelClass}>Slug</label>
-            <input
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              placeholder="auto-generated-from-title"
-              className={inputClass}
-              disabled={!!editingSlug}
-            />
-          </div>
-          <div>
             <label className={labelClass}>Category</label>
             <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputClass}>
               <option value="Dog Care">Dog Care</option>
@@ -627,11 +789,7 @@ function BlogManager(): JSX.Element {
             <input value={readTime} onChange={(e) => setReadTime(e.target.value)} placeholder="5 min read" className={inputClass} />
           </div>
           <div className="sm:col-span-2">
-            <label className={labelClass}>Excerpt (optional — defaults to title)</label>
-            <input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Short description..." className={inputClass} />
-          </div>
-          <div className="sm:col-span-2">
-            <label className={labelClass}>Content (supports markdown-like syntax)</label>
+            <label className={labelClass}>Content</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -708,158 +866,63 @@ function BlogManager(): JSX.Element {
           </div>
         )}
       </div>
-    </div>
-  )
-}
 
-/* ============================================================
- *  Subscriber Manager
- * ============================================================ */
-
-function SubscriberManager(): JSX.Element {
-  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string>('')
-
-  // newsletter form
-  const [subject, setSubject] = useState<string>('')
-  const [body, setBody] = useState<string>('')
-  const [sending, setSending] = useState<boolean>(false)
-  const [sendResult, setSendResult] = useState<{ ok: boolean; msg: string } | null>(null)
-
-  const fetchSubs = useCallback(async (): Promise<void> => {
-    setLoading(true)
-    setError('')
-    try {
-      const res = await fetch(`${API_BASE}/subscribers`)
-      if (!res.ok) throw new Error('Failed to load subscribers')
-      const data: Subscriber[] = await res.json()
-      setSubscribers(data)
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error'
-      setError(msg)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    void fetchSubs()
-  }, [fetchSubs])
-
-  const handleSendNewsletter = async (e: React.FormEvent): Promise<void> => {
-    e.preventDefault()
-    if (!subject || !body) {
-      setSendResult({ ok: false, msg: 'Please fill in subject and body.' })
-      return
-    }
-    setSending(true)
-    setSendResult(null)
-    try {
-      const res = await fetch(`${API_BASE}/send-newsletter`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject, body }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to send newsletter')
-      setSendResult({ ok: true, msg: data.message || `Newsletter sent to ${data.sentCount} subscriber(s).` })
-      setSubject('')
-      setBody('')
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error'
-      setSendResult({ ok: false, msg: `Error: ${msg}` })
-    } finally {
-      setSending(false)
-    }
-  }
-
-  const handleDeleteSub = async (id: number): Promise<void> => {
-    try {
-      const res = await fetch(`${API_BASE}/subscribers?id=${id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Failed to delete subscriber')
-      setSubscribers((prev) => prev.filter((s) => s.id !== id))
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error'
-      setError(msg)
-    }
-  }
-
-  return (
-    <div className="space-y-8">
-      {/* Stats */}
-      <div className="grid sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-ocean-100 flex items-center justify-center">
-              <Mail className="h-6 w-6 text-ocean-700" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-slate-900">{loading ? '—' : subscribers.length}</p>
-              <p className="text-sm text-slate-500">Total Subscribers</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Newsletter form */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-lg font-bold text-slate-900 mb-4">Send Newsletter</h2>
-        <form onSubmit={handleSendNewsletter} className="space-y-4">
-          <div>
-            <label className={labelClass}>Subject</label>
-            <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Newsletter subject line" className={inputClass} />
-          </div>
-          <div>
-            <label className={labelClass}>Body</label>
-            <textarea
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              placeholder="Write your newsletter content..."
-              rows={6}
-              className={inputClass + ' resize-y'}
-            />
-          </div>
-          <div className="flex items-center gap-4">
-            <button type="submit" className={btnPrimary} disabled={sending}>
-              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              {sending ? 'Sending...' : 'Send Newsletter'}
-            </button>
-            {sendResult && (
-              <span className={`text-sm ${sendResult.ok ? 'text-green-600' : 'text-red-600'}`}>{sendResult.msg}</span>
-            )}
-          </div>
-        </form>
-      </div>
-
-      {/* Subscribers list */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-lg font-bold text-slate-900 mb-4">
-          Subscribers ({subscribers.length})
-        </h2>
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-ocean-600" />
-          </div>
-        ) : error ? (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
-        ) : subscribers.length === 0 ? (
-          <p className="text-sm text-slate-500 text-center py-8">No subscribers yet.</p>
-        ) : (
-          <div className="space-y-2">
-            {subscribers.map((sub) => (
-              <div key={sub.id} className="flex items-center justify-between gap-4 p-3 rounded-lg border border-slate-200 hover:border-ocean-300 transition-colors">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900 truncate">{sub.email}</p>
-                  <p className="text-xs text-slate-400">
-                    Subscribed: {new Date(sub.subscribedAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <button onClick={() => void handleDeleteSub(sub.id)} className={btnDanger} title="Remove subscriber">
-                  <Trash2 className="h-4 w-4" />
-                </button>
+      {/* Recently Deleted */}
+      <div className="bg-white rounded-xl border-2 border-amber-300 p-6">
+        <button
+          onClick={() => void toggleTrash()}
+          className="flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-800"
+        >
+          <Trash2 className="h-4 w-4" />
+          Recently Deleted ({trashItems.length})
+          {showTrash ? ' ▲' : ' ▼'}
+        </button>
+        {showTrash && (
+          <div className="mt-4">
+            {trashLoading ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
               </div>
-            ))}
+            ) : trashItems.length === 0 ? (
+              <p className="text-sm text-slate-500 text-center py-4">No deleted posts.</p>
+            ) : (
+              <div className="space-y-3">
+                {trashItems.map((post) => (
+                  <div
+                    key={post.slug}
+                    className="flex items-center justify-between gap-4 p-3 rounded-lg border border-amber-200 bg-amber-50"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-slate-900 truncate">{post.title}</p>
+                      <p className="text-xs text-amber-700 mt-0.5">
+                        Deleted: {post.deletedAt ? new Date(post.deletedAt).toLocaleDateString() : '—'}
+                      </p>
+                      <p className="text-[10px] text-amber-600">
+                        {post.deletedAt ? `Auto-deletes in ${daysUntilAutoDelete(post.deletedAt)} days` : ''}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => void handleRestore(post.slug)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 text-xs font-semibold hover:bg-green-100 border border-green-200"
+                        title="Restore"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Restore
+                      </button>
+                      <button
+                        onClick={() => void handlePermanentDelete(post.slug)}
+                        className={btnDanger + ' !text-xs !px-3 !py-1.5'}
+                        title="Delete permanently"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete Permanently
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -888,6 +951,11 @@ function StoreManager(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>('')
 
+  // trash state
+  const [showTrash, setShowTrash] = useState<boolean>(false)
+  const [trashItems, setTrashItems] = useState<Product[]>([])
+  const [trashLoading, setTrashLoading] = useState<boolean>(false)
+
   // form state
   const [editingId, setEditingId] = useState<number | null>(null)
   const [name, setName] = useState<string>('')
@@ -915,6 +983,20 @@ function StoreManager(): JSX.Element {
       setError(msg)
     } finally {
       setLoading(false)
+    }
+  }, [])
+
+  const fetchTrash = useCallback(async (): Promise<void> => {
+    setTrashLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/products?trash=true`)
+      if (!res.ok) throw new Error('Failed to load trash items')
+      const data = await res.json()
+      setTrashItems(data.items || [])
+    } catch {
+      /* ignore */
+    } finally {
+      setTrashLoading(false)
     }
   }, [])
 
@@ -1003,16 +1085,49 @@ function StoreManager(): JSX.Element {
   }
 
   const handleDelete = async (id: number): Promise<void> => {
-    if (!confirm('Delete this product? This cannot be undone.')) return
+    if (!confirm('Delete this product? It will be moved to Recently Deleted for 30 days.')) return
     try {
       const res = await fetch(`${API_BASE}/products?id=${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete product')
       setProducts((prev) => prev.filter((p) => p.id !== id))
       if (editingId === id) resetForm()
+      setFormMsg('Product moved to Recently Deleted. Auto-deletes after 30 days.')
+      void fetchTrash()
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
       setError(msg)
     }
+  }
+
+  const handleRestore = async (id: number): Promise<void> => {
+    try {
+      const res = await fetch(`${API_BASE}/products?restore=${id}`, { method: 'PUT' })
+      if (!res.ok) throw new Error('Failed to restore')
+      void fetchProducts()
+      void fetchTrash()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    }
+  }
+
+  const handlePermanentDelete = async (id: number): Promise<void> => {
+    if (!confirm('Permanently delete? This cannot be undone.')) return
+    try {
+      const res = await fetch(`${API_BASE}/products?id=${id}&permanent=true`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete permanently')
+      setTrashItems((prev) => prev.filter((p) => p.id !== id))
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      setError(msg)
+    }
+  }
+
+  const toggleTrash = async (): Promise<void> => {
+    if (!showTrash && trashItems.length === 0) {
+      await fetchTrash()
+    }
+    setShowTrash((prev) => !prev)
   }
 
   // Filtered products for display
@@ -1095,16 +1210,6 @@ function StoreManager(): JSX.Element {
                 />
               </div>
             )}
-          </div>
-          <div className="sm:col-span-2">
-            <label className={labelClass}>Description</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Product description..."
-              rows={3}
-              className={inputClass + ' resize-y'}
-            />
           </div>
           <div className="sm:col-span-2 flex items-center gap-4">
             <button type="submit" className={btnPrimary} disabled={saving}>
@@ -1196,6 +1301,66 @@ function StoreManager(): JSX.Element {
               ))}
             </div>
           </>
+        )}
+      </div>
+
+      {/* Recently Deleted */}
+      <div className="bg-white rounded-xl border-2 border-amber-300 p-6">
+        <button
+          onClick={() => void toggleTrash()}
+          className="flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-800"
+        >
+          <Trash2 className="h-4 w-4" />
+          Recently Deleted ({trashItems.length})
+          {showTrash ? ' ▲' : ' ▼'}
+        </button>
+        {showTrash && (
+          <div className="mt-4">
+            {trashLoading ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
+              </div>
+            ) : trashItems.length === 0 ? (
+              <p className="text-sm text-slate-500 text-center py-4">No deleted products.</p>
+            ) : (
+              <div className="space-y-3">
+                {trashItems.map((product) => (
+                  <div
+                    key={product.id}
+                    className="flex items-center justify-between gap-4 p-3 rounded-lg border border-amber-200 bg-amber-50"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-slate-900 truncate">{product.name}</p>
+                      <p className="text-xs text-amber-700 mt-0.5">
+                        Deleted: {product.deletedAt ? new Date(product.deletedAt).toLocaleDateString() : '—'}
+                      </p>
+                      <p className="text-[10px] text-amber-600">
+                        {product.deletedAt ? `Auto-deletes in ${daysUntilAutoDelete(product.deletedAt)} days` : ''}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => void handleRestore(product.id)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 text-xs font-semibold hover:bg-green-100 border border-green-200"
+                        title="Restore"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Restore
+                      </button>
+                      <button
+                        onClick={() => void handlePermanentDelete(product.id)}
+                        className={btnDanger + ' !text-xs !px-3 !py-1.5'}
+                        title="Delete permanently"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete Permanently
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

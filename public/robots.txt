@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block admin from indexing
+Disallow: /admin
+
+# Sitemap
+Sitemap: https://vizag-animal-hospital.in/sitemap.xml

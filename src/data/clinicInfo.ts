@@ -22,6 +22,12 @@ export interface ClinicInfo {
     instagram: string
   }
   mapEmbedUrl: string
+  mapLink: string
+  geo: {
+    latitude: number
+    longitude: number
+  }
+  url: string
 }
 
 export const clinicInfo: ClinicInfo = {
@@ -47,12 +53,19 @@ export const clinicInfo: ClinicInfo = {
     { day: "Thursday", hours: "9:00 AM – 9:30 PM" },
     { day: "Friday", hours: "9:00 AM – 9:30 PM" },
     { day: "Saturday", hours: "9:00 AM – 9:30 PM" },
-    { day: "Sunday", hours: "9:00 AM – 5:00 PM" },
+    { day: "Sunday", hours: "9:00 AM – 2:00 PM, 5:00 PM – 9:30 PM" },
   ],
   social: {
     facebook: "https://facebook.com/vizaganimalhospital",
     instagram: "https://instagram.com/vizaganimalhospital",
   },
   mapEmbedUrl:
-    "https://maps.google.com/maps?q=Vizag+Animal+Hospital+%26+Store&center=17.8035434,83.3616168&z=14&output=embed",
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30389.982864370955!2d83.32350797431637!3d17.80354339999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a395b688b1fd56f%3A0x6b0d4ee62d518b3e!2sVizag%20Animal%20Hospital%20%26%20Store!5e0!3m2!1sen!2sus!4v1783853495214!5m2!1sen!2sus",
+  mapLink:
+    "https://maps.app.goo.gl/4TpLGbDUviYbmw9s8",
+  geo: {
+    latitude: 17.8035,
+    longitude: 83.3506,
+  },
+  url: "https://vizag-animal-hospital.in",
 }

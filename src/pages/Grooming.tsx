@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { Link } from "react-router-dom"
 import {
   Scissors,
@@ -108,13 +108,11 @@ const itemFade = {
 export default function Grooming() {
   return (
     <>
-      <Helmet>
-        <title>Grooming & Spa | Vizag Animal Hospital</title>
-        <meta
-          name="description"
-          content="Professional pet grooming, spa, nail care, and skin care management at Vizag Animal Hospital in Visakhapatnam. Breed-specific haircuts, medicated baths, and skin treatments."
-        />
-      </Helmet>
+      <Seo
+        title="Grooming & Spa | Vizag Animal Hospital"
+        description="Professional pet grooming, spa, nail care, and skin care management at Vizag Animal Hospital in Visakhapatnam. Breed-specific haircuts, medicated baths, and skin treatments."
+        path="/grooming"
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-28 overflow-hidden">

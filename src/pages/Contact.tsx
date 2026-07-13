@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
+import { Seo } from '@/components/common/Seo'
 import {
   Phone, MapPin, Clock, MessageCircle, Send,
   Facebook, Instagram, CheckCircle,
@@ -60,10 +60,11 @@ export default function Contact() {
 
   return (
     <>
-      <Helmet>
-        <title>Contact Us | Vizag Animal Hospital</title>
-        <meta name="description" content="Contact Vizag Animal Hospital in Visakhapatnam. Call, WhatsApp, or visit us for appointments, online consultation, and pet care services." />
-      </Helmet>
+      <Seo
+        title="Contact Us | Vizag Animal Hospital"
+        description="Contact Vizag Animal Hospital in Visakhapatnam. Call, WhatsApp, or visit us for appointments, online consultation, and pet care services."
+        path="/contact"
+      />
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-14 sm:py-20">
@@ -170,7 +171,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 mb-1">Address</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">{clinicInfo.address.full}</p>
+                    <a href={clinicInfo.mapLink} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-600 leading-relaxed hover:text-ocean-700 transition-colors">{clinicInfo.address.full}</a>
                   </div>
                 </Card>
 
@@ -348,6 +349,12 @@ export default function Contact() {
                 referrerPolicy="no-referrer-when-downgrade"
                 title="Clinic Location Map"
               />
+            </div>
+            <div className="text-center mt-4">
+              <a href={clinicInfo.mapLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-ocean-700 hover:text-ocean-800 font-medium text-sm">
+                <MapPin className="h-4 w-4" />
+                Open in Google Maps
+              </a>
             </div>
           </motion.div>
         </Container>

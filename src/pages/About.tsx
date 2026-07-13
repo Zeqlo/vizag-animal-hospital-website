@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { Link } from "react-router-dom"
 import {
   Heart,
@@ -118,13 +118,11 @@ export default function About() {
 
   return (
     <>
-      <Helmet>
-        <title>About Us | Vizag Animal Hospital</title>
-        <meta
-          name="description"
-          content="Learn about Vizag Animal Hospital & Store in Visakhapatnam. Discover our mission, values, facilities, and our certified veterinary team led by Dr. Vani Poosapati (DVM) and Dr. K. Mounika (BVSc. & AH, M.V.Sc)."
-        />
-      </Helmet>
+      <Seo
+        title="About Us | Vizag Animal Hospital"
+        description="Learn about Vizag Animal Hospital & Store in Visakhapatnam. Discover our mission, values, facilities, and our certified veterinary team led by Dr. Vani Poosapati (DVM) and Dr. K. Mounika (BVSc. & AH, M.V.Sc)."
+        path="/about"
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-28">

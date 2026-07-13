@@ -30,7 +30,7 @@ export const teamMembers: TeamMember[] = [
   {
     id: "hembabu",
     name: "Hembabu Singha",
-    qualifications: "Veterinary Polytechnic",
+    qualifications: "",
     specialization: "Groomer",
     bio: "Hembabu is our skilled pet groomer with a gentle touch and a keen eye for detail. He specializes in puppy cuts, breed-specific grooming, medicated baths, and stress-free grooming sessions, ensuring every pet leaves looking and feeling their best.",
     image: "/team/hembabu.jpg",
@@ -60,7 +60,7 @@ export const teamMembers: TeamMember[] = [
     qualifications: "Veterinary Polytechnic",
     specialization: "Veterinary Assistant",
     bio: "Madhavi is the friendly face that greets you and your pet at Vizag Animal Hospital. She manages appointments, assists the veterinarians during consultations, and ensures every visit runs smoothly.",
-    image: "/team/placeholder.svg",
+    image: "/team/madhavi.jpeg",
     role: "support",
   },
 ]

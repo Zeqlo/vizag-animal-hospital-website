@@ -1,15 +1,16 @@
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
+import { Seo } from '@/components/common/Seo'
 import { Link } from 'react-router-dom'
 import { Calendar, Clock, Phone, MapPin, CheckCircle, PawPrint, User, Tag, MessageCircle } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select, Label, FieldError } from '@/components/ui/Input'
+import { DatePicker } from '@/components/ui/DatePicker'
 import { Card } from '@/components/ui/Card'
 import { clinicInfo } from '@/data/clinicInfo'
 import { services as servicesStatic } from '@/data/services'
@@ -20,11 +21,26 @@ const appointmentSchema = z.object({
   petName: z.string().optional(),
   petType: z.enum(['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'], { required_error: 'Please select pet type' }),
   service: z.string().min(1, 'Please select a service'),
-  preferredDate: z.string().refine((date) => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return new Date(date) >= today
-  }, 'Date cannot be in the past'),
+  preferredDate: z.string()
+    .min(1, 'Please select a date')
+    .refine((date) => {
+      // Native date input returns yyyy-mm-dd
+      const m = date.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+      if (!m) return false
+      const year = parseInt(m[1], 10)
+      const month = parseInt(m[2], 10)
+      const day = parseInt(m[3], 10)
+      const d = new Date(year, month - 1, day)
+      return d instanceof Date && !isNaN(d.getTime()) && d.getDate() === day && d.getMonth() === month - 1 && d.getFullYear() === year
+    }, 'Please select a valid date')
+    .refine((date) => {
+      const m = date.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+      if (!m) return true
+      const selected = new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10))
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      return selected >= today
+    }, 'Date cannot be in the past'),
   timeSlot: z.enum([
     'Morning (9:00 AM - 12:00 PM)',
     'Afternoon (12:00 PM - 3:00 PM)',
@@ -36,6 +52,7 @@ const appointmentSchema = z.object({
 
 type AppointmentFormData = z.infer<typeof appointmentSchema>
 
+// Today in yyyy-mm-dd for the native date input min attribute
 const todayStr = new Date().toISOString().split('T')[0]
 
 const WHATSAPP_NUMBER = clinicInfo.whatsapp
@@ -45,6 +62,7 @@ const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}`
 export default function BookAppointment() {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -86,10 +104,11 @@ export default function BookAppointment() {
 
   return (
     <>
-      <Helmet>
-        <title>Book Appointment | Vizag Animal Hospital</title>
-        <meta name="description" content="Book an appointment at Vizag Animal Hospital in Visakhapatnam. Quick, easy online booking for all pet care services." />
-      </Helmet>
+      <Seo
+        title="Book Appointment | Vizag Animal Hospital"
+        description="Book an appointment at Vizag Animal Hospital in Visakhapatnam. Quick, easy online booking for all pet care services."
+        path="/book-appointment"
+      />
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-14 sm:py-20">
@@ -118,7 +137,7 @@ export default function BookAppointment() {
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2 order-2 lg:order-1">
+            <div className="lg:col-span-2 order-1 lg:order-1">
               <AnimatePresence mode="wait">
                 {isSuccess && submittedData ? (
                   <motion.div
@@ -175,7 +194,10 @@ export default function BookAppointment() {
                               <Calendar className="h-4 w-4" /> Date
                             </dt>
                             <dd className="font-medium text-slate-900 text-sm text-right">
-                              {new Date(submittedData.preferredDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                              {(() => {
+                                const [y, m, d] = submittedData.preferredDate.split('-')
+                                return `${d}/${m}/${y}`
+                              })()}
                             </dd>
                           </div>
                           <div className="flex justify-between gap-4">
@@ -312,12 +334,18 @@ export default function BookAppointment() {
                             <div className="grid sm:grid-cols-2 gap-4">
                               <div>
                                 <Label htmlFor="preferredDate">Preferred Date *</Label>
-                                <Input
-                                  id="preferredDate"
-                                  type="date"
-                                  min={todayStr}
-                                  error={!!errors.preferredDate}
-                                  {...register('preferredDate')}
+                                <Controller
+                                  control={control}
+                                  name="preferredDate"
+                                  render={({ field }) => (
+                                    <DatePicker
+                                      id="preferredDate"
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      min={todayStr}
+                                      error={!!errors.preferredDate}
+                                    />
+                                  )}
                                 />
                                 <FieldError>{errors.preferredDate?.message}</FieldError>
                               </div>
@@ -363,7 +391,7 @@ export default function BookAppointment() {
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-6 order-1 lg:order-2">
+            <div className="space-y-6 order-2 lg:order-2">
               {/* Clinic Hours */}
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-4">
@@ -415,11 +443,13 @@ export default function BookAppointment() {
                   <MapPin className="h-5 w-5 text-ocean-700" />
                   <h3 className="font-bold font-heading text-slate-900">Our Location</h3>
                 </div>
-                <p className="text-sm text-slate-600 leading-relaxed mb-2">{clinicInfo.address.line1}</p>
-                <p className="text-sm text-slate-600 leading-relaxed mb-2">{clinicInfo.address.line2}</p>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  {clinicInfo.address.city}, {clinicInfo.address.state} - {clinicInfo.address.pincode}
-                </p>
+                <a href={clinicInfo.mapLink} target="_blank" rel="noopener noreferrer" className="block">
+                  <p className="text-sm text-slate-600 leading-relaxed mb-2 hover:text-ocean-700 transition-colors">{clinicInfo.address.line1}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed mb-2 hover:text-ocean-700 transition-colors">{clinicInfo.address.line2}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed hover:text-ocean-700 transition-colors">
+                    {clinicInfo.address.city}, {clinicInfo.address.state} - {clinicInfo.address.pincode}
+                  </p>
+                </a>
               </Card>
             </div>
           </div>

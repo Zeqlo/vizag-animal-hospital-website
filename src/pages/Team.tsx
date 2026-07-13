@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { Users, Heart, Briefcase } from "lucide-react"
@@ -19,13 +19,11 @@ export default function Team() {
 
   return (
     <>
-      <Helmet>
-        <title>Our Veterinary Team | Vizag Animal Hospital</title>
-        <meta
-          name="description"
-          content="Meet the dedicated veterinarians at Vizag Animal Hospital in Visakhapatnam — Dr. Vani Poosapati (DVM) and Dr. K. Mounika (BVSc. & AH, M.V.Sc). Experienced, compassionate, and ready to care for your pets."
-        />
-      </Helmet>
+      <Seo
+        title="Our Veterinary Team | Vizag Animal Hospital"
+        description="Meet the dedicated veterinarians at Vizag Animal Hospital in Visakhapatnam — Dr. Vani Poosapati (DVM) and Dr. K. Mounika (BVSc. & AH, M.V.Sc). Experienced, compassionate, and ready to care for your pets."
+        path="/team"
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 to-ocean-700 py-20 sm:py-28 overflow-hidden">

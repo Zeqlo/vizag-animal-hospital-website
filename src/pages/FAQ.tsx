@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
+import { Seo } from '@/components/common/Seo'
 import { Link } from 'react-router-dom'
 import { HelpCircle, Phone, MessageCircle } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
@@ -15,10 +15,11 @@ export default function FAQ() {
 
   return (
     <>
-      <Helmet>
-        <title>FAQ | Vizag Animal Hospital</title>
-        <meta name="description" content="Find answers to frequently asked questions about appointments, services, pet store, and billing at Vizag Animal Hospital." />
-      </Helmet>
+      <Seo
+        title="FAQ | Vizag Animal Hospital"
+        description="Find answers to frequently asked questions about appointments, services, pet store, and billing at Vizag Animal Hospital."
+        path="/faq"
+      />
 
       {/* Page Header */}
       <section className="bg-gradient-to-br from-ocean-900 to-ocean-700 text-white py-16 sm:py-20">

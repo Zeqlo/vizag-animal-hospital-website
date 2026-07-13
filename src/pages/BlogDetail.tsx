@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
+import { Seo } from '@/components/common/Seo'
 import { Link, useParams } from 'react-router-dom'
 import { Clock, ArrowLeft, Facebook, MessageCircle } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
@@ -22,9 +22,11 @@ export default function BlogDetail() {
   if (!post) {
     return (
       <>
-        <Helmet>
-          <title>Article Not Found | Vizag Animal Hospital</title>
-        </Helmet>
+        <Seo
+          title="Article Not Found | Vizag Animal Hospital"
+          description="The article you are looking for could not be found."
+          path="/blog"
+        />
         <Section bg="white">
           <Container>
             <div className="text-center py-20 max-w-md mx-auto">
@@ -133,10 +135,11 @@ export default function BlogDetail() {
 
   return (
     <>
-      <Helmet>
-        <title>{post.title} | Vizag Animal Hospital</title>
-        <meta name="description" content={post.excerpt} />
-      </Helmet>
+      <Seo
+        title={`${post.title} | Vizag Animal Hospital`}
+        description={post.excerpt}
+        path={`/blog/${post.slug}`}
+      />
 
       {/* Hero Image */}
       <div className="relative h-[300px] sm:h-[400px] lg:h-[450px] overflow-hidden">

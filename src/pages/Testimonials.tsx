@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { Star, Quote, MessageSquare, TrendingUp } from "lucide-react"
@@ -24,13 +24,11 @@ export default function Testimonials() {
 
   return (
     <>
-      <Helmet>
-        <title>Client Testimonials | Vizag Animal Hospital</title>
-        <meta
-          name="description"
-          content="Read what pet owners in Visakhapatnam say about Vizag Animal Hospital. Real reviews from happy clients about our veterinary care, grooming, boarding, and more."
-        />
-      </Helmet>
+      <Seo
+        title="Client Testimonials | Vizag Animal Hospital"
+        description="Read what pet owners in Visakhapatnam say about Vizag Animal Hospital. Real reviews from happy clients about our veterinary care, grooming, boarding, and more."
+        path="/testimonials"
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 to-ocean-700 py-20 sm:py-28 overflow-hidden">

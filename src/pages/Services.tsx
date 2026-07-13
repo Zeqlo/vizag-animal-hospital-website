@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { Helmet } from "react-helmet-async"
+import { Seo } from "@/components/common/Seo"
 import { Link } from "react-router-dom"
 import {
   Phone,
@@ -20,13 +20,11 @@ export default function Services() {
   const services = servicesStatic
   return (
     <>
-      <Helmet>
-        <title>Veterinary Services | Vizag Animal Hospital</title>
-        <meta
-          name="description"
-          content="Explore the full range of veterinary services at Vizag Animal Hospital: vaccinations, critical care, all types of surgeries, grooming & spa, nail & skin care, radiology & blood tests, doorstep services, and more."
-        />
-      </Helmet>
+      <Seo
+        title="Veterinary Services | Vizag Animal Hospital"
+        description="Explore the full range of veterinary services at Vizag Animal Hospital: vaccinations, critical care, all types of surgeries, grooming & spa, nail & skin care, radiology & blood tests, doorstep services, and more."
+        path="/services"
+      />
 
       {/* Page Header */}
       <section className="relative bg-gradient-to-br from-ocean-900 via-ocean-700 to-coral-500 py-16 sm:py-28">
