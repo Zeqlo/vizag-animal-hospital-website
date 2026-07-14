@@ -17,6 +17,7 @@ export const productCategories = [
   "Medicine",
   "Supplements",
   "Grooming Products",
+  "Tick Control",
   "Bird & Fish Supplies",
 ]
 

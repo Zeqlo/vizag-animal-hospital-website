@@ -943,6 +943,7 @@ const PRODUCT_CATEGORIES = [
   'Medicine',
   'Supplements',
   'Grooming Products',
+  'Tick Control',
   'Bird & Fish Supplies',
 ]
 
