@@ -8,3 +8,5 @@ dist-ssr
 .env.*.local
 .vercel
 .env*.local
+.env.fresh
+api/_test_cursor.js

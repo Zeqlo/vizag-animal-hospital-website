@@ -15,6 +15,7 @@ import {
   ShoppingBag,
   RotateCcw,
 } from 'lucide-react'
+import { AdminProductThumb } from '@/components/common/AdminProductThumb'
 
 // TODO: Replace with proper auth later
 const ADMIN_PASSWORD = 'vizagadmin2024'
@@ -1015,14 +1016,25 @@ function StoreManager(): JSX.Element {
     setFormMsg('')
   }
 
-  const handleEdit = (product: Product): void => {
+  const handleEdit = async (product: Product): Promise<void> => {
     setEditingId(product.id)
     setName(product.name)
     setCategory(product.category)
     setPrice(String(product.price))
-    setImage(product.image)
     setDescription(product.description)
+    setImage('')
     setFormMsg('')
+    // Fetch the full product (with image) for editing
+    try {
+      const res = await fetch(`${API_BASE}/products?id=${product.id}`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.image) setImage(data.image)
+        if (data.description) setDescription(data.description)
+      }
+    } catch {
+      /* ignore — image can be re-uploaded */
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -1045,12 +1057,27 @@ function StoreManager(): JSX.Element {
     setSaving(true)
     setFormMsg('')
     try {
+      // If image is base64, upload to Storage first and get the URL
+      let imageUrl = image
+      if (image && image.startsWith('data:')) {
+        setFormMsg('Uploading image...')
+        const uploadRes = await fetch(`${API_BASE}/upload-image`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image }),
+        })
+        if (!uploadRes.ok) throw new Error('Failed to upload image')
+        const uploadData = await uploadRes.json()
+        imageUrl = uploadData.url
+        setImage(imageUrl) // Update state so the form shows the URL
+      }
+
       const body = {
         id: editingId || undefined,
         name,
         category,
         price: parseFloat(price) || 0,
-        image,
+        image: imageUrl,
         description,
       }
       const url = editingId
@@ -1272,15 +1299,7 @@ function StoreManager(): JSX.Element {
                   key={product.id}
                   className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:border-ocean-300 transition-colors"
                 >
-                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
-                    {product.image ? (
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ShoppingBag className="h-5 w-5 text-slate-300" />
-                      </div>
-                    )}
-                  </div>
+                  <AdminProductThumb productId={product.id} productName={product.name} fallbackImage={product.image} />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-slate-900 truncate">{product.name}</p>
                     <div className="flex items-center gap-2 flex-wrap">

@@ -56,7 +56,7 @@ export default function Store() {
         (p: Product) =>
           p.name.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q)
+          (p.description || '').toLowerCase().includes(q)
       )
     }
 
